@@ -1,0 +1,3453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pahadi Milan — Wireframes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+    integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+    crossorigin="anonymous"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: #F0EDE6;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel">
+
+    // ─── Tokens ───────────────────────────────────────────────
+    const M = '#7B1F2A'; // maroon
+    const G = '#B8882A'; // gold
+    const BG = '#FAF7F2'; // warm white
+    const LG = '#E4DDD0'; // light gray/beige
+    const GR = '#999';
+    const K = 'Kalam, cursive';
+
+    // ─── Primitives ───────────────────────────────────────────
+    const Ph = ({ h = 100, label = 'photo', r = 8, w = '100%', style = {} }) => (
+      <div style={{
+        height: h, width: w, borderRadius: r, flexShrink: 0,
+        background: 'repeating-linear-gradient(45deg,#EDE8DF,#EDE8DF 4px,#E2DDD5 4px,#E2DDD5 8px)',
+        border: `1.5px dashed #BBB`, display: 'flex', alignItems: 'center',
+        justifyContent: 'center', position: 'relative', overflow: 'hidden', ...style
+      }}>
+        <span style={{
+          fontFamily: K, fontSize: 10, color: '#999', background: 'rgba(255,255,255,0.75)',
+          padding: '2px 6px', borderRadius: 3
+        }}>{label}</span>
+      </div>
+    );
+
+    const Btn = ({ label, primary, ghost, full, sm, gold, style = {} }) => (
+      <div style={{
+        height: sm ? 38 : 50, borderRadius: sm ? 19 : 25,
+        background: primary ? M : gold ? G : ghost ? 'transparent' : '#EDE8DF',
+        border: ghost ? `1.5px solid #BBBBB` : 'none',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '0 22px', width: full ? '100%' : 'auto', flexShrink: 0, ...style
+      }}>
+        <span style={{
+          fontFamily: K, fontSize: sm ? 12 : 14, fontWeight: primary || gold ? 700 : 400,
+          color: primary || gold ? '#fff' : ghost ? '#666' : '#444'
+        }}>{label}</span>
+      </div>
+    );
+
+    const Inp = ({ label, val, sm, icon }) => (
+      <div style={{
+        height: sm ? 42 : 52, borderRadius: 12, border: `1.5px solid ${LG}`,
+        background: '#fff', display: 'flex', alignItems: 'center',
+        padding: '0 14px', marginBottom: 8, gap: 10
+      }}>
+        {icon && <div style={{ width: 18, height: 18, borderRadius: 9, background: LG, flexShrink: 0 }} />}
+        <span style={{ fontFamily: K, fontSize: sm ? 12 : 14, color: val ? '#333' : '#BBB' }}>{val || label}</span>
+      </div>
+    );
+
+    const Tag = ({ label, active, gold, sm }) => (
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', height: sm ? 24 : 28, borderRadius: 14,
+        padding: `0 ${sm ? 8 : 12}px`, marginRight: 5, marginBottom: 5,
+        background: active ? M + '22' : gold ? G + '18' : '#F0EAE0',
+        border: `1px solid ${active ? M + '50' : gold ? G + '40' : LG}`
+      }}>
+        <span style={{ fontFamily: K, fontSize: sm ? 10 : 11.5, color: active ? M : gold ? G : '#666' }}>{label}</span>
+      </div>
+    );
+
+    const H1 = ({ t, size = 22, c = '#1A1010', mb = 6 }) =>
+      <div style={{ fontFamily: K, fontSize: size, fontWeight: 700, color: c, marginBottom: mb, lineHeight: 1.2 }}>{t}</div>;
+
+    const P = ({ t, size = 13, c = '#666', mb = 8 }) =>
+      <div style={{ fontFamily: K, fontSize: size, color: c, marginBottom: mb, lineHeight: 1.5 }}>{t}</div>;
+
+    const Lbl = ({ t, mb = 4 }) =>
+      <div style={{ fontFamily: K, fontSize: 10, color: '#999', marginBottom: mb, letterSpacing: 0.8, textTransform: 'uppercase' }}>{t}</div>;
+
+    const Sep = ({ my = 14 }) => <div style={{ height: 1, background: LG, margin: `${my}px 0` }} />;
+
+    const Progress = ({ pct }) => (
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+          <span style={{ fontFamily: K, fontSize: 11, color: '#888' }}>Profile completion</span>
+          <span style={{ fontFamily: K, fontSize: 11, color: M, fontWeight: 700 }}>{pct}%</span>
+        </div>
+        <div style={{ height: 5, borderRadius: 3, background: LG }}>
+          <div style={{ height: 5, borderRadius: 3, background: M, width: `${pct}%` }} />
+        </div>
+      </div>
+    );
+
+    const StepProgress = ({ step, total }) => (
+      <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <div key={i} style={{
+            flex: 1, height: 3, borderRadius: 2,
+            background: i < step ? M : i === step ? G : LG
+          }} />
+        ))}
+      </div>
+    );
+
+    const BottomNav = ({ active = 0 }) => (
+      <div style={{ display: 'flex', borderTop: `1px solid ${LG}`, padding: '10px 0 20px', background: 'rgba(255,255,255,0.97)' }}>
+        {[['⌂', 'Discover'], ['♡', 'Matches'], ['✉', 'Messages'], ['◉', 'Profile']].map(([ic, lbl], i) => (
+          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <span style={{ fontSize: 16, opacity: i === active ? 1 : 0.35 }}>{ic}</span>
+            <span style={{ fontFamily: K, fontSize: 9.5, color: i === active ? M : GR }}>{lbl}</span>
+            {i === active && <div style={{ width: 14, height: 2, borderRadius: 1, background: M, marginTop: 1 }} />}
+          </div>
+        ))}
+      </div>
+    );
+
+    const TrustBadge = ({ level = 'Medium' }) => (
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 4, height: 20, borderRadius: 10,
+        padding: '0 8px', background: G + '22', border: `1px solid ${G}50`
+      }}>
+        <div style={{ width: 5, height: 5, borderRadius: 3, background: G }} />
+        <span style={{ fontFamily: K, fontSize: 9.5, color: G, fontWeight: 700 }}>{level} Trust</span>
+      </div>
+    );
+
+    const ScorePill = ({ score, size = 38 }) => (
+      <div style={{
+        width: size, height: size, borderRadius: size / 2, background: M,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+      }}>
+        <span style={{ fontFamily: K, fontSize: size * 0.28, fontWeight: 700, color: '#fff' }}>{score}%</span>
+      </div>
+    );
+
+    const Wrap = ({ children, bg = BG, pt = 70, pb = 0, px = 20 }) => (
+      <div style={{
+        height: '100%', background: bg, overflow: 'auto',
+        paddingTop: pt, paddingBottom: pb, paddingLeft: px, paddingRight: px,
+        display: 'flex', flexDirection: 'column'
+      }}>
+        {children}
+      </div>
+    );
+
+    const Nudge = ({ text }) => (
+      <div style={{
+        borderRadius: 10, background: M + '12', border: `1px dashed ${M}40`,
+        padding: '10px 14px', marginBottom: 14, display: 'flex', gap: 8, alignItems: 'flex-start'
+      }}>
+        <span style={{ fontSize: 14 }}>✨</span>
+        <span style={{ fontFamily: K, fontSize: 12, color: M, lineHeight: 1.4 }}>{text}</span>
+      </div>
+    );
+
+    const MatchRow = ({ name, age, score, msg, trust = 'Medium' }) => (
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0',
+        borderBottom: `1px solid ${LG}`
+      }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <Ph h={48} w={48} label='' r={24} />
+          <div style={{ position: 'absolute', bottom: -1, right: -1 }}>
+            <ScorePill score={score} size={20} />
+          </div>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+            <span style={{ fontFamily: K, fontSize: 14, fontWeight: 700, color: '#222' }}>{name}, {age}</span>
+            <TrustBadge level={trust} />
+          </div>
+          <span style={{
+            fontFamily: K, fontSize: 12, color: GR, display: 'block',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+          }}>{msg}</span>
+        </div>
+      </div>
+    );
+
+    // ─── SCREEN COMPONENTS ────────────────────────────────────
+
+    // 1A. Auth — OTP Login
+    const AuthOTP = () => (
+      <Wrap pt={80} pb={40}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 16, background: M,
+            margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{ fontFamily: K, fontSize: 24, color: '#fff', fontWeight: 700 }}>ॐ</span>
+          </div>
+          <H1 t="Pahadi Milan" size={26} />
+          <P t="Matrimony rooted in the hills" size={13} c={GR} mb={0} />
+        </div>
+        <div style={{ flex: 1 }} />
+        <H1 t="Welcome back" size={20} mb={6} />
+        <P t="Enter your phone number to continue" size={13} />
+        <Inp label="+91  Phone number" />
+        <Btn label="Send OTP →" primary full style={{ marginTop: 4 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '18px 0' }}>
+          <div style={{ flex: 1, height: 1, background: LG }} /><span style={{ fontFamily: K, fontSize: 11, color: GR }}>or continue with</span><div style={{ flex: 1, height: 1, background: LG }} />
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Btn label="🍏  Apple" ghost full style={{ flex: 1 }} />
+          <Btn label="G  Google" ghost full style={{ flex: 1 }} />
+        </div>
+        <P t="New here? Create your profile →" size={12} c={M} mb={0} style={{ marginTop: 18, textAlign: 'center' }} />
+        <div style={{ flex: 1 }} />
+      </Wrap>
+    );
+
+    // 1B. Auth — Social-First / Immersive
+    const AuthSocial = () => (
+      <div style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+        <Ph h='65%' label="mountains + couple (hero illustration)" r={0}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, width: '100%', height: '65%' }} />
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '65%',
+          background: 'linear-gradient(to bottom, transparent 40%, rgba(10,5,3,0.85))'
+        }}>
+          <div style={{ position: 'absolute', bottom: 24, left: 20, right: 20 }}>
+            <div style={{
+              fontFamily: K, fontSize: 13, color: 'rgba(255,255,255,0.7)',
+              background: G + '30', display: 'inline-block', padding: '3px 10px', borderRadius: 10,
+              border: `1px solid ${G}50`, marginBottom: 10
+            }}>पहाड़ी मिलन</div>
+            <H1 t="Find your person, from the hills" size={22} c='#fff' mb={6} />
+            <P t="Culturally rooted. Seriously intentional." size={13} c='rgba(255,255,255,0.75)' mb={0} />
+          </div>
+        </div>
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          background: BG, borderRadius: '24px 24px 0 0', padding: '24px 20px 40px'
+        }}>
+          <Btn label="Continue with Apple" primary full style={{ marginBottom: 10 }} />
+          <Btn label="Continue with Google" full style={{ marginBottom: 10, background: '#fff', border: `1.5px solid ${LG}` }} />
+          <Btn label="Use phone number" ghost full />
+          <P t="By continuing, you agree to our Terms & Privacy Policy" size={10} c={GR} mb={0} style={{ marginTop: 14, textAlign: 'center' }} />
+        </div>
+      </div>
+    );
+
+    // 2A. Onboarding Step 1
+    const OnboardStep1 = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={0} total={5} />
+        <H1 t="Let's start with the basics" size={20} mb={6} />
+        <P t="We'll use this to find the right match for you." size={12} />
+        <div style={{ marginTop: 8 }}>
+          <Lbl t="Your full name" mb={6} />
+          <Inp label="e.g. Priya Rawat" />
+          <Lbl t="I am" mb={6} />
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            {['Woman', 'Man', 'Other'].map(l => <Tag key={l} label={l} active={l === 'Woman'} />)}
+          </div>
+          <Lbl t="Date of birth" mb={6} />
+          <Inp label="DD / MM / YYYY" />
+          <Lbl t="This profile is for" mb={6} />
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {['Myself', 'My son', 'My daughter', 'My sibling'].map(l =>
+              <Tag key={l} label={l} active={l === 'Myself'} />)}
+          </div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <Nudge text="Start with the basics — you can add more details later to get better matches." />
+        <Btn label="Continue →" primary full />
+      </Wrap>
+    );
+
+    // 2B. Onboarding Step 2 — Culture
+    const OnboardStep2 = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={1} total={5} />
+        <H1 t="Your Pahadi roots" size={20} mb={6} />
+        <P t="This helps find culturally compatible matches." size={12} />
+        <div style={{ marginTop: 8 }}>
+          <Lbl t="Home district (Uttarakhand)" mb={6} />
+          <Inp label="e.g. Almora, Pithoragarh…" icon />
+          <Lbl t="Mother tongue" mb={6} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 10 }}>
+            {['Kumaoni', 'Garhwali', 'Hindi', 'Jaunsari'].map(l => <Tag key={l} label={l} active={l === 'Kumaoni'} />)}
+          </div>
+          <Lbl t="Religion & community" mb={6} />
+          <Inp label="Hindu — General" />
+          <Lbl t="Caste (optional)" mb={6} />
+          <Inp label="Skip / Prefer not to say" />
+          <Lbl t="Current location" mb={6} />
+          <Inp label="City, State" icon />
+          <Lbl t="Open to relocation?" mb={6} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            {['Yes', 'No', 'Maybe'].map(l => <Tag key={l} label={l} active={l === 'Yes'} />)}
+          </div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Continue →" primary full style={{ marginTop: 14 }} />
+      </Wrap>
+    );
+
+    // 2C. Profile Completion Nudge
+    const OnboardNudge = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={3} total={5} />
+        <div style={{ textAlign: 'center', padding: '16px 0 24px' }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 36, background: M + '15',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px'
+          }}>
+            <span style={{ fontSize: 28 }}>🏔️</span>
+          </div>
+          <H1 t="You're doing great!" size={20} mb={6} />
+          <P t="Your profile is 60% complete. A complete profile gets 3× more connection requests." size={13} c='#555' />
+        </div>
+        <Progress pct={60} />
+        <div style={{ marginTop: 20 }}>
+          {[
+            { label: 'Add photos', sub: '0 of 3 added', done: false },
+            { label: 'Education & profession', sub: 'Incomplete', done: false },
+            { label: 'Family details', sub: 'Incomplete', done: false },
+            { label: 'Basic info', sub: 'Complete ✓', done: true },
+            { label: 'Pahadi roots', sub: 'Complete ✓', done: true },
+          ].map((item, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '11px 14px', borderRadius: 12,
+              background: item.done ? M + '08' : '#fff', marginBottom: 8,
+              border: `1px solid ${item.done ? M + '20' : LG}`
+            }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: 10, flexShrink: 0,
+                background: item.done ? M : LG, display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                {item.done && <span style={{ fontSize: 10, color: '#fff' }}>✓</span>}
+              </div>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontFamily: K, fontSize: 13, color: item.done ? M : '#333', fontWeight: 700 }}>{item.label}</span>
+                <span style={{ fontFamily: K, fontSize: 11, color: GR, display: 'block' }}>{item.sub}</span>
+              </div>
+              {!item.done && <span style={{ fontFamily: K, fontSize: 11, color: M }}>Add →</span>}
+            </div>
+          ))}
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Complete profile now" primary full style={{ marginTop: 14 }} />
+        <Btn label="Explore matches first" ghost full style={{ marginTop: 8 }} />
+      </Wrap>
+    );
+
+    // 3A. Discover — Card Stack
+    const DiscoverCard = () => (
+      <div style={{ height: '100%', background: '#F4EFE8', display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '72px 18px 12px'
+        }}>
+          <H1 t="Discover" size={22} mb={0} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 18, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
+            }}>
+              <span style={{ fontSize: 14 }}>⚙</span>
+            </div>
+          </div>
+        </div>
+        {/* Profile card */}
+        <div style={{ flex: 1, padding: '4px 16px 0', position: 'relative' }}>
+          {/* Background card */}
+          <div style={{
+            position: 'absolute', top: 12, left: 24, right: 24, bottom: 80,
+            background: '#fff', borderRadius: 24, transform: 'rotate(3deg)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+          }} />
+          {/* Main card */}
+          <div style={{
+            position: 'relative', borderRadius: 24, overflow: 'hidden',
+            height: 'calc(100% - 80px)', boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
+          }}>
+            <Ph h='100%' label="profile photo" r={0} style={{ position: 'absolute', inset: 0, height: '100%' }} />
+            {/* Overlay gradient */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(10,4,2,0.9) 40%, transparent 70%)'
+            }} />
+            {/* Trust badge top */}
+            <div style={{ position: 'absolute', top: 14, right: 14 }}>
+              <TrustBadge level="Verified" />
+            </div>
+            {/* Info bottom */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>
+                <div>
+                  <H1 t="Anjali, 27" size={20} c='#fff' mb={2} />
+                  <P t="Almora · Software Engineer" size={12} c='rgba(255,255,255,0.8)' mb={4} />
+                  <div>
+                    <Tag label="Kumaoni" sm /><Tag label="Almora" sm /><Tag label="Hinge" sm />
+                  </div>
+                </div>
+                <ScorePill score={87} />
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
+                borderRadius: 10, padding: '8px 12px', marginTop: 6, border: '1px solid rgba(255,255,255,0.2)'
+              }}>
+                <span style={{ fontFamily: K, fontSize: 11, color: 'rgba(255,255,255,0.9)' }}>💡 Why this match? Both from Kumaoni families, similar values on family</span>
+              </div>
+            </div>
+          </div>
+          {/* Action buttons */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 14, paddingTop: 14, paddingBottom: 10 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.10)', border: `1.5px solid ${LG}`
+            }}>
+              <span style={{ fontSize: 20 }}>✕</span>
+            </div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: G + '22', marginTop: 5,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${G}50`
+            }}>
+              <span style={{ fontSize: 16 }}>⭐</span>
+            </div>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: `0 2px 12px ${M}50`
+            }}>
+              <span style={{ fontSize: 20, color: '#fff' }}>♡</span>
+            </div>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // 3B. Discover — Curated Feed
+    const DiscoverFeed = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+          <H1 t="For you" size={22} mb={0} />
+          <Btn label="Filters" sm ghost style={{ height: 32, fontSize: 11 }} />
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 18px 10px' }}>
+          {/* Today's picks */}
+          <Lbl t="Today's curated picks · 4 new" mb={8} />
+          {/* Big card */}
+          <div style={{
+            borderRadius: 18, overflow: 'hidden', background: '#fff',
+            marginBottom: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.07)'
+          }}>
+            <Ph h={160} label="Priya, 29 · Pithoragarh" r={0} />
+            <div style={{ padding: '12px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <div><H1 t="Priya Bisht, 29" size={15} mb={1} />
+                  <P t="Pithoragarh · Teacher" size={12} c={GR} mb={4} /></div>
+                <ScorePill score={91} size={36} />
+              </div>
+              <div style={{ marginBottom: 8 }}><Tag label="Garhwali" sm /><Tag label="Kumaon" sm /><TrustBadge level="Verified" /></div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Btn label="♡  Like" primary sm style={{ flex: 1 }} />
+                <Btn label="Skip" sm ghost style={{ flex: 1 }} />
+              </div>
+            </div>
+          </div>
+          {/* Mini cards row */}
+          <Lbl t="New in your area" mb={8} />
+          <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+            {['Meena, 26', 'Kavita, 30'].map(n => (
+              <div key={n} style={{ flex: 1, borderRadius: 16, overflow: 'hidden', background: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }}>
+                <Ph h={110} label={n} r={0} />
+                <div style={{ padding: '8px 10px' }}>
+                  <span style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#222', display: 'block' }}>{n}</span>
+                  <span style={{ fontFamily: K, fontSize: 10.5, color: GR }}>Dehradun</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Nudge text="Complete your profile to unlock better matches ✨" />
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // 3C. Discover — Grid
+    const DiscoverGrid = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <H1 t="Browse" size={22} mb={0} />
+            <Btn label="⚙ Filters" sm ghost />
+          </div>
+          <Inp label="Search by name or location…" icon sm />
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <Tag label="Kumaoni" active sm /><Tag label="25–32 yrs" sm /><Tag label="Nearby" sm /><Tag label="+ more" sm />
+          </div>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '6px 14px 10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {[{ n: 'Anjali, 27', l: 'Almora', s: 87 }, { n: 'Reena, 29', l: 'Nainital', s: 78 },
+            { n: 'Sunita, 26', l: 'Haridwar', s: 83 }, { n: 'Pooja, 31', l: 'Dehradun', s: 91 }].map(p => (
+              <div key={p.n} style={{
+                borderRadius: 16, overflow: 'hidden', background: '#fff',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.07)'
+              }}>
+                <div style={{ position: 'relative' }}>
+                  <Ph h={140} label={p.n} r={0} />
+                  <div style={{ position: 'absolute', top: 8, right: 8 }}><ScorePill score={p.s} size={28} /></div>
+                </div>
+                <div style={{ padding: '8px 10px 10px' }}>
+                  <span style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#222', display: 'block' }}>{p.n}</span>
+                  <span style={{ fontFamily: K, fontSize: 10.5, color: GR, display: 'block', marginBottom: 6 }}>{p.l}</span>
+                  <TrustBadge level="Medium" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // 4A. Profile Detail
+    const ProfileDetail = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, overflow: 'auto' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <Ph h={300} label="photo gallery (swipeable)" r={0} />
+          <div style={{ position: 'absolute', top: 72, left: 16 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 16, background: 'rgba(0,0,0,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ color: '#fff', fontSize: 14 }}>‹</span>
+            </div>
+          </div>
+          <div style={{
+            position: 'absolute', bottom: 12, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', gap: 4
+          }}>
+            {[0, 1, 2, 3].map(i => <div key={i} style={{
+              width: i === 0 ? 16 : 6, height: 4, borderRadius: 2,
+              background: i === 0 ? '#fff' : 'rgba(255,255,255,0.5)'
+            }} />)}
+          </div>
+        </div>
+        <div style={{ padding: '16px 18px', flex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+            <div>
+              <H1 t="Anjali Rawat, 27" size={20} mb={2} />
+              <P t="Software Engineer · Bengaluru" size={13} c={GR} mb={4} />
+              <TrustBadge level="Verified" />
+            </div>
+            <ScorePill score={87} size={46} />
+          </div>
+          {/* Compatibility breakdown */}
+          <div style={{
+            borderRadius: 14, background: '#fff', padding: '14px', marginBottom: 14,
+            border: `1px solid ${LG}`, boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+              <H1 t="Pahadi Compatibility" size={13} mb={0} />
+              <span style={{ fontFamily: K, fontSize: 11, color: M }}>87% match</span>
+            </div>
+            {[['Cultural roots', '92'], ['Family values', '88'], ['Lifestyle', '81'], ['Ambitions', '85']].map(([l, v]) => (
+              <div key={l} style={{ marginBottom: 6 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                  <span style={{ fontFamily: K, fontSize: 11, color: '#555' }}>{l}</span>
+                  <span style={{ fontFamily: K, fontSize: 11, color: M, fontWeight: 700 }}>{v}%</span>
+                </div>
+                <div style={{ height: 4, borderRadius: 2, background: LG }}>
+                  <div style={{ height: 4, borderRadius: 2, background: M, width: `${v}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <Sep my={10} />
+          <Lbl t="Cultural Identity" mb={8} />
+          <div><Tag label="🏔 Almora, Uttarakhand" /><Tag label="Kumaoni" /><Tag label="Brahmin" /></div>
+          <P t="Originally from Almora. Currently in Bengaluru. Loves pahadi food and festivals." size={12} c='#555' mb={0} />
+          <Sep my={10} />
+          <Lbl t="About" mb={6} />
+          <P t="Family-oriented, working in tech. Love hiking in the Himalayas on weekends. Looking for someone who values both tradition and independence." size={12} c='#555' />
+          <div style={{ display: 'flex', gap: 10, marginTop: 4, paddingBottom: 20 }}>
+            <Btn label="✕  Pass" ghost style={{ flex: 1 }} />
+            <Btn label="♡  Like" primary style={{ flex: 1 }} />
+          </div>
+        </div>
+      </div>
+    );
+
+    // 4B. Profile Detail V2 — Roots Lifestyle Visual
+    const ProfileDetail2 = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, overflow: 'auto' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <Ph h={340} label="full-bleed photo" r={0} />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to top, rgba(10,4,2,0.92) 35%, transparent 65%)'
+          }} />
+          <div style={{ position: 'absolute', top: 72, right: 16 }}>
+            <Btn label="⋯" sm ghost style={{ background: 'rgba(0,0,0,0.3)', border: 'none', color: '#fff', height: 32, borderRadius: 16 }} />
+          </div>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 18px 20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <div>
+                <H1 t="Meena Joshi, 29" size={20} c='#fff' mb={2} />
+                <P t="Doctor · Rishikesh" size={12} c='rgba(255,255,255,0.75)' mb={6} />
+                <div><Tag label="🏔 Chamoli" sm /><Tag label="Garhwali" sm /></div>
+              </div>
+              <TrustBadge level="Verified" />
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '16px 18px', flex: 1 }}>
+          {/* Roots vs Lifestyle slider */}
+          <div style={{
+            borderRadius: 14, background: '#fff', padding: '14px', marginBottom: 12,
+            border: `1px solid ${LG}`
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+              <span style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#333' }}>Roots vs Lifestyle</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>How traditional?</span>
+            </div>
+            <div style={{ position: 'relative', height: 28, marginBottom: 4 }}>
+              <div style={{
+                position: 'absolute', top: '50%', left: 0, right: 0, height: 6, borderRadius: 3,
+                background: `linear-gradient(to right, ${M}, ${G})`, transform: 'translateY(-50%)'
+              }} />
+              <div style={{
+                position: 'absolute', top: '50%', left: '65%', width: 20, height: 20, borderRadius: 10,
+                background: '#fff', border: `2px solid ${M}`, transform: 'translate(-50%,-50%)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+              }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Traditional</span>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Modern</span>
+            </div>
+          </div>
+          {/* Sections */}
+          {[{ title: 'About her', text: 'Loves Uttarakhand, family-first approach. Believes in a balanced lifestyle.' },
+          { title: 'Family', text: 'Nuclear family in Rishikesh. Parents are teachers. One sibling.' }].map(s => (
+            <div key={s.title} style={{ marginBottom: 12 }}>
+              <Lbl t={s.title} mb={4} />
+              <P t={s.text} size={12} c='#555' mb={0} />
+              <Sep my={10} />
+            </div>
+          ))}
+          <div style={{ display: 'flex', gap: 10, paddingBottom: 20 }}>
+            <Btn label="Send note + Like" primary style={{ flex: 1 }} />
+            <Btn label="Pass" ghost style={{ flex: 1 }} />
+          </div>
+        </div>
+      </div>
+    );
+
+    // 5A. Like with Note / Icebreaker
+    const LikeNote = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.5)', position: 'relative' }}>
+        <Ph h='60%' label="Anjali's photo behind" r={0} style={{ position: 'absolute', top: 0, left: 0, right: 0, width: '100%', height: '60%' }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <div style={{ background: BG, borderRadius: '24px 24px 0 0', padding: '24px 20px 40px' }}>
+            <H1 t="Like Anjali?" size={18} mb={4} />
+            <P t="Add an icebreaker — profiles with a note get 4× more replies." size={12} c='#666' />
+            <Lbl t="Quick starters" mb={8} />
+            <div style={{ marginBottom: 12 }}>
+              {['Tell me about your favourite pahadi festival 🎉', 'Which hill station is your go-to? 🏔️', 'What does family mean to you?'].map(s => (
+                <div key={s} style={{
+                  padding: '10px 14px', borderRadius: 10, background: '#fff', marginBottom: 6,
+                  border: `1px dashed ${LG}`, cursor: 'pointer'
+                }}>
+                  <span style={{ fontFamily: K, fontSize: 12, color: '#444' }}>{s}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              borderRadius: 12, background: '#fff', border: `1.5px solid ${LG}`,
+              padding: '10px 14px', marginBottom: 14, minHeight: 60
+            }}>
+              <span style={{ fontFamily: K, fontSize: 12, color: '#CCC' }}>Or write your own message…</span>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Btn label="♡  Like with note" primary style={{ flex: 1 }} />
+              <Btn label="Just like" ghost style={{ flex: 1 }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // 5B. Interaction — Super Like / Pass animation state
+    const InteractionUI = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F4EFE8' }}>
+        <div style={{ padding: '72px 18px 0', flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1 t="Today's picks" size={20} mb={0} />
+          <span style={{ fontFamily: K, fontSize: 12, color: GR }}>3 left today</span>
+        </div>
+        <div style={{ flex: 1, padding: '12px 18px 0', position: 'relative' }}>
+          {/* Card with LIKE overlay */}
+          <div style={{
+            borderRadius: 22, overflow: 'hidden', height: '75%', position: 'relative',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12)', border: `3px solid ${M}`
+          }}>
+            <Ph h='100%' label="profile photo" r={0} style={{ height: '100%' }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(123,31,42,0.7) 30%, transparent 60%)'
+            }} />
+            {/* LIKE stamp */}
+            <div style={{
+              position: 'absolute', top: 30, left: 20, padding: '6px 16px', borderRadius: 8,
+              border: `3px solid ${M}`, transform: 'rotate(-12deg)'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 22, fontWeight: 700, color: M }}>LIKE</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+              <H1 t="Kavita, 28" size={18} c='#fff' mb={2} />
+              <P t="Nainital · Architect" size={12} c='rgba(255,255,255,0.8)' mb={0} />
+            </div>
+          </div>
+          {/* Actions */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16, paddingTop: 16 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                width: 54, height: 54, borderRadius: 27, background: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.10)', border: `1.5px solid ${LG}`, margin: '0 auto 4px'
+              }}>
+                <span style={{ fontSize: 22 }}>✕</span>
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Pass</span>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 22, background: G + '25',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: `1.5px solid ${G}50`, margin: '0 auto 4px'
+              }}>
+                <span style={{ fontSize: 18 }}>⭐</span>
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Super</span>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                width: 54, height: 54, borderRadius: 27, background: M,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: `0 2px 14px ${M}60`, margin: '0 auto 4px'
+              }}>
+                <span style={{ fontSize: 22, color: '#fff' }}>♡</span>
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: M, fontWeight: 700 }}>Like</span>
+            </div>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // 6. Matches
+    const MatchesScreen = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', flexShrink: 0 }}>
+          <H1 t="Matches" size={22} mb={4} />
+          <P t="Mutual connections · start a conversation" size={12} c={GR} mb={10} />
+          {/* New matches row */}
+          <Lbl t="New matches · 3" mb={8} />
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+            {['Anjali', 'Reena', 'Priya'].map(n => (
+              <div key={n} style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 26, background: LG, marginBottom: 4,
+                  border: `2px solid ${M}`, overflow: 'hidden'
+                }}>
+                  <Ph h={52} label='' r={24} style={{ height: '100%' }} />
+                </div>
+                <span style={{ fontFamily: K, fontSize: 10, color: '#444' }}>{n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 18px 10px' }}>
+          <Lbl t="All matches" mb={8} />
+          <MatchRow name="Anjali Rawat" age={27} score={87} msg="Hey! I saw we're both from Almora 🏔" trust="Verified" />
+          <MatchRow name="Reena Bisht" age={30} score={78} msg="Would love to connect!" trust="Medium" />
+          <MatchRow name="Priya Joshi" age={26} score={91} msg="Namaste! Your profile looks wonderful…" trust="Verified" />
+          <MatchRow name="Kavita Negi" age={28} score={83} msg="No messages yet" trust="Low" />
+        </div>
+        <BottomNav active={1} />
+      </div>
+    );
+
+    // 7. Chat
+    const ChatScreen = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        {/* Header */}
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 22, background: LG, flexShrink: 0, overflow: 'hidden' }}>
+              <Ph h={44} label='' r={22} style={{ height: '100%' }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <H1 t="Anjali Rawat" size={16} mb={0} />
+                <TrustBadge level="Verified" />
+              </div>
+              <P t="Online now · 87% match" size={11} c={M} mb={0} />
+            </div>
+            <span style={{ fontFamily: K, fontSize: 11, color: GR }}>⋯</span>
+          </div>
+        </div>
+        {/* Compatibility banner */}
+        <div style={{ background: M + '12', padding: '8px 16px', border: `1px solid ${M}20`, flexShrink: 0 }}>
+          <span style={{ fontFamily: K, fontSize: 11, color: M }}>🏔 High compatibility match — both from Kumaoni families with similar values</span>
+        </div>
+        {/* Messages */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ alignSelf: 'flex-start', maxWidth: '75%' }}>
+            <div style={{
+              background: '#fff', borderRadius: '18px 18px 18px 4px', padding: '10px 14px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222' }}>Hey! I saw we're both from Almora 🏔️</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block', paddingLeft: 4 }}>10:24 AM</span>
+          </div>
+          <div style={{ alignSelf: 'flex-end', maxWidth: '75%' }}>
+            <div style={{ background: M, borderRadius: '18px 18px 4px 18px', padding: '10px 14px' }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#fff' }}>Yes! Small world 😄 Which part of Almora are you from?</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block', textAlign: 'right', paddingRight: 4 }}>10:26 AM ✓✓</span>
+          </div>
+          {/* Typing indicator */}
+          <div style={{
+            alignSelf: 'flex-start', background: '#fff', borderRadius: '18px 18px 18px 4px',
+            padding: '10px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+          }}>
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+              {[0, 1, 2].map(i => <div key={i} style={{ width: 7, height: 7, borderRadius: 4, background: GR, opacity: 0.5 }} />)}
+            </div>
+          </div>
+        </div>
+        {/* Icebreaker suggestion */}
+        <div style={{ padding: '6px 14px', flexShrink: 0 }}>
+          <div style={{
+            borderRadius: 10, background: '#fff', border: `1px solid ${LG}`,
+            padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8
+          }}>
+            <span style={{ fontSize: 12 }}>💡</span>
+            <span style={{ fontFamily: K, fontSize: 11, color: '#666', flex: 1 }}>Ask about her favourite pahadi festival →</span>
+          </div>
+        </div>
+        {/* Input */}
+        <div style={{ padding: '8px 14px 28px', background: '#fff', borderTop: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              flex: 1, height: 42, borderRadius: 21, background: '#F4EEE6', border: `1px solid ${LG}`,
+              display: 'flex', alignItems: 'center', padding: '0 14px', gap: 8
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#CCC', flex: 1 }}>Message…</span>
+              <span style={{ fontSize: 14 }}>🎙</span>
+            </div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ color: '#fff', fontSize: 14 }}>↑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // 8. Verification
+    const VerifyScreen = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Get Verified" size={22} mb={6} />
+        <P t="Verified profiles get 5× more connection requests. Takes 2 minutes." size={13} />
+        {/* Trust ladder */}
+        <div style={{
+          borderRadius: 16, background: '#fff', padding: '16px', marginBottom: 16,
+          border: `1px solid ${LG}`
+        }}>
+          <Lbl t="Your trust level" mb={10} />
+          {[{ l: 'Basic', desc: 'Phone verified', done: true }, { l: 'Medium', desc: 'Photo verified', done: false }, { l: 'High', desc: 'ID + education verified', done: false }].map((t, i) => (
+            <div key={t.l} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: i < 2 ? 12 : 0 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 14, flexShrink: 0,
+                background: t.done ? M : LG, display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontFamily: K, fontSize: 12, color: t.done ? '#fff' : '#AAA' }}>{i + 1}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: t.done ? M : '#555' }}>{t.l} Trust</span>
+                  {t.done && <span style={{ fontFamily: K, fontSize: 11, color: M }}>✓ Done</span>}
+                </div>
+                <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{t.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Lbl t="Upload documents" mb={10} />
+        {[{ l: 'Your photo', sub: 'Clear face photo', done: false }, { l: 'Government ID', sub: 'Aadhaar / PAN / Passport', done: false }, { l: 'Work / Education proof', sub: 'Optional but recommended', done: false }].map(item => (
+          <div key={item.l} style={{
+            display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+            borderRadius: 12, background: '#fff', marginBottom: 8, border: `1.5px dashed ${LG}`
+          }}>
+            <Ph h={44} w={44} label='' r={8} style={{ flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#333', display: 'block' }}>{item.l}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{item.sub}</span>
+            </div>
+            <Btn label="Upload" sm style={{ background: LG }} />
+          </div>
+        ))}
+        <div style={{ flex: 1 }} />
+        <Nudge text="Your documents are only used for verification. They are never shared with other users." />
+        <Btn label="Submit for verification" primary full />
+      </Wrap>
+    );
+
+    // 9. Report & Safety
+    const SafetyScreen = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Report Profile" size={22} mb={4} />
+        <P t="Your report is confidential. Help keep Pahadi Milan safe." size={13} />
+        <Lbl t="Why are you reporting?" mb={10} />
+        {[{ l: 'Fake or misleading profile', s: 'Wrong photos / info' },
+        { l: 'Harassment or abuse', s: 'Inappropriate messages' },
+        { l: 'Spam or scam', s: 'Suspicious behavior' },
+        { l: 'Underage user', s: 'Appears to be under 18' },
+        { l: 'Other', s: 'Something else' }].map((r, i) => (
+          <div key={r.l} style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 16px', borderRadius: 14, background: i === 0 ? M + '12' : '#fff',
+            border: `1.5px solid ${i === 0 ? M + '40' : LG}`, marginBottom: 8, cursor: 'pointer'
+          }}>
+            <div style={{
+              width: 20, height: 20, borderRadius: 10, flexShrink: 0,
+              border: `2px solid ${i === 0 ? M : GR}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              {i === 0 && <div style={{ width: 10, height: 10, borderRadius: 5, background: M }} />}
+            </div>
+            <div>
+              <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#333', display: 'block' }}>{r.l}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{r.s}</span>
+            </div>
+          </div>
+        ))}
+        <div style={{ flex: 1 }} />
+        <Btn label="Block & Report" primary full style={{ marginTop: 14, background: '#B71C1C' }} />
+        <Btn label="Cancel" ghost full style={{ marginTop: 8 }} />
+      </Wrap>
+    );
+
+    // ══════════════════════════════════════════════════════════
+    // NEW SCREENS
+    // ══════════════════════════════════════════════════════════
+
+    // ─── Shared: Visual Tile selector ────────────────────────
+    const TileRow = ({ items, cols = 3, selected = 0 }) => (
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols},1fr)`, gap: 8, marginBottom: 14 }}>
+        {items.map((item, i) => (
+          <div key={i} style={{
+            borderRadius: 14, padding: '14px 8px', textAlign: 'center',
+            background: i === selected ? M + '18' : '#fff',
+            border: `1.5px solid ${i === selected ? M : LG}`,
+            cursor: 'pointer'
+          }}>
+            <div style={{ fontSize: 22, marginBottom: 4 }}>{item.icon}</div>
+            <div style={{
+              fontFamily: K, fontSize: 12, fontWeight: i === selected ? 700 : 400,
+              color: i === selected ? M : '#444', lineHeight: 1.3
+            }}>{item.label}</div>
+            {item.sub && <div style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 2 }}>{item.sub}</div>}
+          </div>
+        ))}
+      </div>
+    );
+
+    // ─── Onboarding Step 3: Lifestyle ────────────────────────
+    const OnboardStep3 = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={2} total={5} />
+        <H1 t="Your lifestyle" size={20} mb={4} />
+        <P t="Quick picks — tap to select" size={12} />
+        <Lbl t="Diet preference" mb={8} />
+        <TileRow items={[
+          { icon: '🥗', label: 'Vegetarian' }, { icon: '🍖', label: 'Non-Veg' },
+          { icon: '🌿', label: 'Jain' }, { icon: '🥦', label: 'Vegan' },
+          { icon: '🤷', label: 'No preference', sub: 'open to all' }
+        ]} cols={3} selected={0} />
+        <Lbl t="Smoking" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          {['🚭 Never', '🚬 Occasionally', '💨 Regularly'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} style={{ flex: 1 }} />)}
+        </div>
+        <Lbl t="Drinking" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          {['🙅 Never', '🥂 Socially', '🍺 Regularly'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} />)}
+        </div>
+        <Lbl t="Hobbies & interests (pick all that apply)" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {['🏔 Hiking', '🍳 Cooking', '🎵 Music', '🎨 Art / Aipan',
+            '✈ Travel', '📚 Reading', '🪘 Folk dance', '🧘 Yoga',
+            '📸 Photography', '🌾 Farming'].map((l, i) =>
+              <Tag key={l} label={l} active={[0, 2, 3].includes(i)} />)}
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Continue →" primary full style={{ marginTop: 14 }} />
+      </Wrap>
+    );
+
+    // ─── Onboarding Step 4: Preferences ─────────────────────
+    const OnboardStep4 = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={3} total={5} />
+        <H1 t="Who are you looking for?" size={20} mb={4} />
+        <P t="We'll prioritise matches based on this — you can change later" size={12} />
+        <Lbl t="Age range" mb={6} />
+        <div style={{ padding: '0 4px', marginBottom: 14 }}>
+          <div style={{ position: 'relative', height: 36, marginBottom: 4 }}>
+            <div style={{
+              position: 'absolute', top: '50%', left: '12%', right: '22%', height: 4,
+              borderRadius: 2, background: M, transform: 'translateY(-50%)'
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', left: 0, right: '79%', height: 4,
+              borderRadius: 2, background: LG, transform: 'translateY(-50%)'
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', right: 0, left: '78%', height: 4,
+              borderRadius: 2, background: LG, transform: 'translateY(-50%)'
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', left: '12%', width: 20, height: 20, borderRadius: 10,
+              background: '#fff', border: `2px solid ${M}`, transform: 'translate(-50%,-50%)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', left: '78%', width: 20, height: 20, borderRadius: 10,
+              background: '#fff', border: `2px solid ${M}`, transform: 'translate(-50%,-50%)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+            }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontFamily: K, fontSize: 12, color: M, fontWeight: 700 }}>24 yrs</span>
+            <span style={{ fontFamily: K, fontSize: 12, color: M, fontWeight: 700 }}>34 yrs</span>
+          </div>
+        </div>
+        <Lbl t="Height preference" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0 }}>
+          {["Any height", "Under 5'4\"", "5'4\"–5'7\"", "5'7\"–6'0\"", "Above 6'0\""].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} />)}
+        </div>
+        <Lbl t="Religion" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {['Any', 'Hindu', 'Sikh', 'Buddhist', 'Other'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} />)}
+        </div>
+        <Lbl t="Location preference" mb={8} />
+        <TileRow items={[
+          { icon: '🏘', label: 'Same district' }, { icon: '🏔', label: 'Uttarakhand' },
+          { icon: '🌏', label: 'Anywhere in India' }, { icon: '✈', label: 'Open to NRI' },
+        ]} cols={4} selected={1} />
+        <Lbl t="Education" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {["Any", "Graduate", "Post-graduate", "Professional degree"].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} />)}
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Continue →" primary full style={{ marginTop: 14 }} />
+      </Wrap>
+    );
+
+    // ─── Onboarding Step 5: Intent ───────────────────────────
+    const OnboardStep5 = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={4} total={5} />
+        <H1 t="Your intent" size={20} mb={4} />
+        <P t="Help us understand where you are in your journey" size={12} />
+        <Lbl t="When are you planning to marry?" mb={10} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
+          {[
+            { icon: '💍', label: 'Within 6 months', sub: 'Ready to commit' },
+            { icon: '🌱', label: 'In 1–2 years', sub: 'Exploring seriously' },
+            { icon: '🔭', label: 'No fixed timeline', sub: 'Open to the right person' },
+          ].map((item, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+              borderRadius: 16, background: i === 1 ? M + '14' : '#fff', border: `1.5px solid ${i === 1 ? M : LG}`,
+              cursor: 'pointer'
+            }}>
+              <span style={{ fontSize: 24 }}>{item.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: K, fontSize: 14, fontWeight: 700, color: i === 1 ? M : '#333' }}>{item.label}</div>
+                <div style={{ fontFamily: K, fontSize: 11, color: GR }}>{item.sub}</div>
+              </div>
+              <div style={{
+                width: 20, height: 20, borderRadius: 10, border: `2px solid ${i === 1 ? M : GR}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                {i === 1 && <div style={{ width: 10, height: 10, borderRadius: 5, background: M }} />}
+              </div>
+            </div>
+          ))}
+        </div>
+        <Lbl t="My personality leans…" mb={10} />
+        <div style={{ borderRadius: 14, background: '#fff', padding: '14px 16px', border: `1px solid ${LG}`, marginBottom: 14 }}>
+          <div style={{ position: 'relative', height: 28, marginBottom: 8 }}>
+            <div style={{
+              position: 'absolute', top: '50%', left: 0, right: 0, height: 6, borderRadius: 3,
+              background: `linear-gradient(to right, ${M}, ${G})`, transform: 'translateY(-50%)'
+            }} />
+            <div style={{
+              position: 'absolute', top: '50%', left: '40%', width: 20, height: 20, borderRadius: 10,
+              background: '#fff', border: `2px solid ${M}`, transform: 'translate(-50%,-50%)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+            }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontFamily: K, fontSize: 11, color: GR }}>Traditional & rooted</span>
+            <span style={{ fontFamily: K, fontSize: 11, color: GR }}>Modern & independent</span>
+          </div>
+        </div>
+        <Lbl t="One thing family means to me…" mb={6} />
+        <div style={{
+          borderRadius: 12, background: '#fff', border: `1.5px solid ${LG}`,
+          padding: '12px 14px', minHeight: 64, marginBottom: 14
+        }}>
+          <span style={{ fontFamily: K, fontSize: 12, color: '#BBB' }}>Write a short answer (optional prompt)</span>
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Complete setup →" primary full />
+      </Wrap>
+    );
+
+    // ─── Onboarding Photo Upload ─────────────────────────────
+    const OnboardPhotos = () => (
+      <Wrap pt={72} pb={20}>
+        <StepProgress step={1} total={5} />
+        <H1 t="Add your photos" size={20} mb={4} />
+        <P t="Profiles with 4+ photos get 3× more matches" size={12} />
+        <Nudge text="Add a variety of photos — the app picks your best as your primary automatically ✨" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 14 }}>
+          {[
+            { label: 'Primary', sub: 'face clearly visible', required: true },
+            { label: 'At work / college', sub: 'professional' },
+            { label: 'With family', sub: 'shows roots' },
+            { label: 'Holiday / travel', sub: 'pahadi trip?' },
+            { label: 'Cultural', sub: 'festival, traditional' },
+            { label: 'Everyday', sub: 'natural + candid' },
+          ].map((slot, i) => (
+            <div key={i} style={{ position: 'relative' }}>
+              <div style={{
+                height: 100, borderRadius: 12,
+                background: i === 0 ? M + '12' : 'repeating-linear-gradient(45deg,#EDE8DF,#EDE8DF 4px,#E2DDD5 4px,#E2DDD5 8px)',
+                border: `1.5px dashed ${i === 0 ? M : '#BBB'}`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4
+              }}>
+                <span style={{ fontSize: 22 }}>{i === 0 ? '📸' : '+'}</span>
+                <span style={{ fontFamily: K, fontSize: 10, color: i === 0 ? M : '#999', textAlign: 'center', padding: '0 4px' }}>{slot.label}</span>
+              </div>
+              <div style={{ fontFamily: K, fontSize: 9, color: GR, textAlign: 'center', marginTop: 3 }}>{slot.sub}</div>
+              {slot.required && <div style={{
+                position: 'absolute', top: 4, right: 4, width: 16, height: 16, borderRadius: 8,
+                background: M, display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: 8, color: '#fff', fontWeight: 700 }}>!</span>
+              </div>}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderRadius: 12, background: '#fff', border: `1px solid ${LG}`, padding: '12px 14px', marginBottom: 14 }}>
+          <div style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#333', marginBottom: 6 }}>📷 Photo tips</div>
+          {['Clear face, good lighting', 'Avoid group photos as primary', 'Smile — approachable photos do better'].map(tip => (
+            <div key={tip} style={{ fontFamily: K, fontSize: 11, color: '#666', marginBottom: 3 }}>· {tip}</div>
+          ))}
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Save & continue →" primary full />
+        <Btn label="Add photos later" ghost full style={{ marginTop: 8 }} />
+      </Wrap>
+    );
+
+    // ─── It's a Match! ───────────────────────────────────────
+    const MatchCelebration = () => (
+      <div style={{
+        height: '100%', background: `linear-gradient(135deg, ${M} 0%, #4A0E14 100%)`,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '0 24px', position: 'relative', overflow: 'hidden'
+      }}>
+        {/* Confetti dots */}
+        {[...Array(20)].map((_, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            top: `${Math.random() * 80 + 5}%`, left: `${Math.random() * 90 + 5}%`,
+            width: 6, height: 6, borderRadius: 3,
+            background: ['#FFD700', '#fff', '#FFB347', '#B8882A'][i % 4], opacity: 0.6
+          }} />
+        ))}
+        <div style={{
+          fontFamily: K, fontSize: 13, color: 'rgba(255,255,255,0.7)',
+          background: 'rgba(255,255,255,0.12)', padding: '4px 14px', borderRadius: 20,
+          border: '1px solid rgba(255,255,255,0.2)', marginBottom: 24
+        }}>पहाड़ी मिलन</div>
+        <div style={{
+          fontFamily: K, fontSize: 32, fontWeight: 700, color: '#fff',
+          textAlign: 'center', marginBottom: 6, lineHeight: 1.2
+        }}>It's a Match! ♡</div>
+        <div style={{
+          fontFamily: K, fontSize: 14, color: 'rgba(255,255,255,0.75)',
+          textAlign: 'center', marginBottom: 32
+        }}>You and Anjali both liked each other</div>
+        {/* Two photos */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 24 }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: 40, overflow: 'hidden',
+            border: '3px solid #fff', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <Ph h={80} label='You' r={40} />
+          </div>
+          <div style={{
+            zIndex: 1, width: 44, height: 44, borderRadius: 22, background: G,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '2px solid #fff', margin: '0 -12px', boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+          }}>
+            <span style={{ fontSize: 18 }}>♡</span>
+          </div>
+          <div style={{
+            width: 80, height: 80, borderRadius: 40, overflow: 'hidden',
+            border: '3px solid #fff', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <Ph h={80} label='Anjali' r={40} />
+          </div>
+        </div>
+        {/* Match score */}
+        <div style={{
+          background: 'rgba(255,255,255,0.12)', borderRadius: 16,
+          padding: '12px 24px', marginBottom: 32, textAlign: 'center',
+          border: '1px solid rgba(255,255,255,0.2)'
+        }}>
+          <div style={{ fontFamily: K, fontSize: 28, fontWeight: 700, color: G }}>87%</div>
+          <div style={{ fontFamily: K, fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Pahadi Compatibility Score</div>
+          <div style={{ fontFamily: K, fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>Both Kumaoni · Similar family values · Almora connection</div>
+        </div>
+        <Btn label="Send a message →" style={{ background: G, width: '100%', marginBottom: 12 }} />
+        <Btn label="Keep browsing" ghost full style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.8)' }} />
+      </div>
+    );
+
+    // ─── Like Animation State ────────────────────────────────
+    const LikeAnim = () => (
+      <div style={{ height: '100%', background: '#F4EFE8', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '72px 18px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1 t="Discover" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, padding: '0 16px', position: 'relative' }}>
+          {/* Card flying right with tilt */}
+          <div style={{
+            position: 'relative', borderRadius: 24, overflow: 'hidden',
+            height: '78%', transform: 'rotate(8deg) translateX(40px)',
+            boxShadow: '0 8px 32px rgba(123,31,42,0.25)',
+            border: `3px solid ${M}`,
+            transition: 'transform 0.3s'
+          }}>
+            <Ph h='100%' label="profile photo" r={0} style={{ position: 'absolute', inset: 0, height: '100%' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(10,4,2,0.7) 30%,transparent 70%)' }} />
+            {/* LIKE stamp — top left */}
+            <div style={{
+              position: 'absolute', top: 28, left: 18, padding: '8px 20px', borderRadius: 10,
+              border: `4px solid ${M}`, transform: 'rotate(-15deg)',
+              background: 'rgba(255,255,255,0.08)'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 28, fontWeight: 700, color: M, letterSpacing: 2 }}>LIKE</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
+              <H1 t="Anjali, 27" size={18} c='#fff' mb={1} />
+              <P t="Almora · Software Engineer" size={12} c='rgba(255,255,255,0.8)' mb={0} />
+            </div>
+          </div>
+          {/* Heart burst effect */}
+          <div style={{ position: 'absolute', top: '35%', right: 30, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {['♡', '♡', '♡'].map((h, i) => (
+              <span key={i} style={{ fontSize: [18, 14, 10][i], color: M, opacity: [1, 0.6, 0.3][i] }}>{h}</span>
+            ))}
+          </div>
+          <div style={{ position: 'absolute', bottom: 84, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 14 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: 'rgba(255,255,255,0.6)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${LG}`
+            }}>
+              <span style={{ fontSize: 20, opacity: 0.4 }}>✕</span></div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: G + '22', marginTop: 5,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${G}50`, opacity: 0.5
+            }}>
+              <span style={{ fontSize: 16 }}>⭐</span></div>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: `0 4px 20px ${M}80`, transform: 'scale(1.12)'
+            }}>
+              <span style={{ fontSize: 20, color: '#fff' }}>♡</span></div>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // ─── Dislike / Pass Animation ────────────────────────────
+    const DislikeAnim = () => (
+      <div style={{ height: '100%', background: '#F4EFE8', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '72px 18px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1 t="Discover" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, padding: '0 16px', position: 'relative' }}>
+          <div style={{
+            position: 'relative', borderRadius: 24, overflow: 'hidden',
+            height: '78%', transform: 'rotate(-8deg) translateX(-40px)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            border: `3px solid #888`
+          }}>
+            <Ph h='100%' label="profile photo" r={0} style={{ position: 'absolute', inset: 0, height: '100%' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(0,0,0,0.6) 30%,transparent 70%)' }} />
+            {/* NOPE stamp */}
+            <div style={{
+              position: 'absolute', top: 28, right: 18, padding: '8px 20px', borderRadius: 10,
+              border: `4px solid #888`, transform: 'rotate(15deg)', background: 'rgba(255,255,255,0.08)'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 28, fontWeight: 700, color: '#888', letterSpacing: 2 }}>NOPE</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
+              <H1 t="Kavita, 28" size={18} c='rgba(255,255,255,0.6)' mb={1} />
+              <P t="Dehradun · CA" size={12} c='rgba(255,255,255,0.5)' mb={0} />
+            </div>
+          </div>
+          {/* X marks */}
+          <div style={{ position: 'absolute', top: '35%', left: 28, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {['✕', '✕', '✕'].map((x, i) => (
+              <span key={i} style={{ fontSize: [18, 14, 10][i], color: '#888', opacity: [1, 0.6, 0.3][i] }}>{x}</span>
+            ))}
+          </div>
+          <div style={{ position: 'absolute', bottom: 84, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 14 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.20)', transform: 'scale(1.12)', border: '2px solid #DDD'
+            }}>
+              <span style={{ fontSize: 20 }}>✕</span></div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: G + '22', marginTop: 5,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${G}50`, opacity: 0.4
+            }}>
+              <span style={{ fontSize: 16 }}>⭐</span></div>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: `0 2px 12px ${M}50`, opacity: 0.4
+            }}>
+              <span style={{ fontSize: 20, color: '#fff' }}>♡</span></div>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // ─── Cultural Connections ────────────────────────────────
+    const CulturalScreen = () => (
+      <Wrap pt={72} pb={20}>
+        <H1 t="Cultural identity" size={22} mb={4} />
+        <P t="What makes you Pahadi? Select all that resonate." size={13} />
+        <Lbl t="Traditions & festivals I celebrate" mb={10} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 14 }}>
+          {[{ e: '🥁', l: 'Dhol Damao', a: true }, { e: '🎨', l: 'Aipan Art', a: true }, { e: '🏔', l: 'Nanda Devi Raj Jat' }, { e: '🎶', l: 'Jagar & Mangal' }, { e: '🍛', l: 'Pahadi cuisine', a: true }, { e: '💃', l: 'Chholiya dance' }, { e: '🪔', l: 'Harela festival', a: true }, { e: '🌺', l: 'Phool Dei' }].map(({ e, l, a }, i) => (
+            <div key={i} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5, height: 30, borderRadius: 15,
+              padding: '0 12px', marginRight: 6, marginBottom: 6,
+              background: a ? M + '18' : '#F0EAE0', border: `1px solid ${a ? M + '50' : LG}`
+            }}>
+              <span style={{ fontSize: 13 }}>{e}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: a ? M : '#666' }}>{l}</span>
+              {a && <span style={{ fontSize: 10, color: M }}>✓</span>}
+            </div>
+          ))}
+        </div>
+        <Lbl t="My cultural badges" mb={10} />
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
+          {[{ e: '🏔', l: 'Hill native', c: M }, { e: '🥁', l: 'Folk lover', c: G }, { e: '🎨', l: 'Aipan artist', c: '#2E7D32' }, { e: '🍃', l: 'Nature connect', c: '#1565C0' }].map(({ e, l, c }) => (
+            <div key={l} style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+              padding: '12px 16px', borderRadius: 14, background: '#fff', border: `1px solid ${LG}`,
+              boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
+            }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 20, background: c + '20',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${c}40`
+              }}>
+                <span style={{ fontSize: 18 }}>{e}</span>
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: c, fontWeight: 700 }}>{l}</span>
+            </div>
+          ))}
+        </div>
+        <Lbl t="Languages I speak" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {['Kumaoni', 'Hindi', 'English', 'Garhwali'].map((l, i) =>
+            <Tag key={l} label={l} active={i < 3} />)}
+        </div>
+        <Sep my={12} />
+        <Lbl t="Home district on map" mb={8} />
+        <div style={{
+          borderRadius: 16, overflow: 'hidden', height: 120, position: 'relative',
+          background: 'repeating-linear-gradient(45deg,#d4e8d4,#d4e8d4 6px,#c8dfc8 6px,#c8dfc8 12px)',
+          border: `1.5px solid #B0CCB0`
+        }}>
+          {/* Mountain placeholders */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0,
+            display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 2, padding: '0 20px'
+          }}>
+            {[30, 50, 40, 60, 35, 45, 55].map((h, i) => (
+              <div key={i} style={{
+                flex: 1, height: h, background: '#6B9E6B', opacity: 0.6,
+                clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
+              }} />
+            ))}
+          </div>
+          {/* Pin */}
+          <div style={{ position: 'absolute', top: '25%', left: '58%' }}>
+            <div style={{ width: 16, height: 16, borderRadius: 8, background: M, border: '2px solid #fff', boxShadow: '0 2px 6px rgba(0,0,0,0.3)' }} />
+            <div style={{ width: 2, height: 8, background: M, margin: '0 auto' }} />
+          </div>
+          <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, textAlign: 'center' }}>
+            <span style={{
+              fontFamily: K, fontSize: 10, color: '#fff', background: 'rgba(0,0,0,0.4)',
+              padding: '2px 8px', borderRadius: 8
+            }}>Almora, Uttarakhand</span>
+          </div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <Btn label="Save cultural profile" primary full style={{ marginTop: 14 }} />
+      </Wrap>
+    );
+
+    // ─── Events & Festivals ──────────────────────────────────
+    const EventsScreen = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', flexShrink: 0 }}>
+          <H1 t="Events near you" size={22} mb={4} />
+          <P t="Connect through shared cultural moments" size={12} c={GR} mb={10} />
+          <div style={{ display: 'flex', gap: 6, marginBottom: 4 }}>
+            {['All', 'Festivals', 'Meetups', 'Virtual'].map((l, i) =>
+              <Tag key={l} label={l} active={i === 0} sm />)}
+          </div>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 18px 10px' }}>
+          {[
+            { name: 'Nanda Devi Raj Jat 2025', loc: 'Chamoli district', date: 'Aug 15', attending: 34, tag: 'Festival' },
+            { name: 'Pahadi Milan Meetup — Delhi', loc: 'Connaught Place, Delhi', date: 'May 10', attending: 18, tag: 'Meetup' },
+            { name: 'Kumaon Folk Music Evening', loc: 'Nainital', date: 'May 25', attending: 11, tag: 'Cultural' },
+          ].map((ev, i) => (
+            <div key={i} style={{
+              borderRadius: 16, background: '#fff', marginBottom: 12,
+              overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            }}>
+              <Ph h={80} label={ev.name} r={0} />
+              <div style={{ padding: '12px 14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                  <H1 t={ev.name} size={14} mb={2} />
+                  <Tag label={ev.tag} gold sm />
+                </div>
+                <P t={`📍 ${ev.loc}`} size={11} c={GR} mb={4} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: -6 }}>
+                    {[0, 1, 2].map(j => (
+                      <div key={j} style={{
+                        width: 22, height: 22, borderRadius: 11, background: LG,
+                        border: '2px solid #fff', marginLeft: j > 0 ? -6 : 0
+                      }} />
+                    ))}
+                    <span style={{ fontFamily: K, fontSize: 11, color: GR, marginLeft: 6 }}>{ev.attending} attending</span>
+                  </div>
+                  <span style={{ fontFamily: K, fontSize: 11, color: M, fontWeight: 700 }}>{ev.date} →</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // ─── Settings ────────────────────────────────────────────
+    const SettingsScreen = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Settings" size={22} mb={18} />
+        {[
+          {
+            group: 'Account', items: [
+              { icon: '📱', label: 'Phone number', val: '+91 98765 •••••' },
+              { icon: '✉️', label: 'Email', val: 'priya@gmail.com' },
+              { icon: '🔔', label: 'Notifications' },
+            ]
+          },
+          {
+            group: 'Privacy & Safety', items: [
+              { icon: '👁', label: 'Who can see my profile', val: 'Everyone' },
+              { icon: '✓✓', label: 'Read receipts', toggle: true, on: true },
+              { icon: '🚫', label: 'Blocked users', val: '2 users' },
+              { icon: '📍', label: 'Show location', toggle: true, on: false },
+            ]
+          },
+          {
+            group: 'Discover preferences', items: [
+              { icon: '🎯', label: 'Partner preferences', val: 'Edit →' },
+              { icon: '🏔', label: 'Cultural filter', val: 'Kumaoni only' },
+              { icon: '⭐', label: 'Trust level filter', val: 'Medium+' },
+            ]
+          },
+          {
+            group: 'Premium', items: [
+              { icon: '💎', label: 'Pahadi Gold', val: 'Upgrade', accent: true },
+              { icon: '👓', label: 'Who viewed me', val: 'Unlock with Gold' },
+            ]
+          },
+          {
+            group: 'Support', items: [
+              { icon: '🆘', label: 'Help & FAQ' },
+              { icon: '⚑', label: 'Report a problem' },
+              { icon: '🚪', label: 'Log out', danger: true },
+            ]
+          },
+        ].map(group => (
+          <div key={group.group} style={{ marginBottom: 20 }}>
+            <Lbl t={group.group} mb={8} />
+            <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}` }}>
+              {group.items.map((item, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: 12, padding: '13px 16px',
+                  borderBottom: i < group.items.length - 1 ? `1px solid ${LG}` : 'none',
+                  background: item.danger ? '#FFF5F5' : 'transparent'
+                }}>
+                  <span style={{ fontSize: 16, width: 22, textAlign: 'center' }}>{item.icon}</span>
+                  <span style={{
+                    fontFamily: K, fontSize: 14, color: item.danger ? '#B71C1C' : item.accent ? G : '#333',
+                    flex: 1, fontWeight: item.accent ? 700 : 400
+                  }}>{item.label}</span>
+                  {item.toggle ? (
+                    <div style={{
+                      width: 44, height: 26, borderRadius: 13,
+                      background: item.on ? M : LG, position: 'relative'
+                    }}>
+                      <div style={{
+                        position: 'absolute', top: 3, width: 20, height: 20, borderRadius: 10,
+                        background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                        [item.on ? 'right' : 'left']: 3
+                      }} />
+                    </div>
+                  ) : (
+                    <span style={{ fontFamily: K, fontSize: 12, color: GR }}>{item.val || '›'}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </Wrap>
+    );
+
+    // ─── Edit Profile ────────────────────────────────────────
+    const EditProfile = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Edit profile" size={22} mb={16} />
+        {/* Photo grid */}
+        <Lbl t="Photos" mb={8} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginBottom: 16 }}>
+          {['Primary', 'Office', 'Family', 'Holiday', '', ''].map((l, i) => (
+            <div key={i} style={{
+              height: 80, borderRadius: 10, overflow: 'hidden', position: 'relative',
+              background: l ? 'repeating-linear-gradient(45deg,#EDE8DF,#EDE8DF 4px,#E2DDD5 4px,#E2DDD5 8px)' : '#F5F0EA',
+              border: `1.5px dashed ${l ? '#BBB' : LG}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              {l ? <span style={{ fontFamily: K, fontSize: 9, color: '#999', background: 'rgba(255,255,255,0.75)', padding: '2px 4px', borderRadius: 3 }}>{l}</span>
+                : <span style={{ fontSize: 18, color: LG }}>+</span>}
+              {l && <div style={{
+                position: 'absolute', top: 3, right: 3, width: 18, height: 18, borderRadius: 9,
+                background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: 10, color: '#fff' }}>✕</span></div>}
+            </div>
+          ))}
+        </div>
+        {/* Sections */}
+        {[
+          { t: 'Basic info', fields: ['Full name', 'Date of birth', 'Height', 'Marital status'] },
+          { t: 'Pahadi roots', fields: ['Home district', 'Mother tongue', 'Religion', 'Community'] },
+          { t: 'Career', fields: ['Education', 'Profession', 'Company', 'Income range'] },
+          { t: 'About me', fields: ['Bio', 'Family details'] },
+        ].map(sec => (
+          <div key={sec.t} style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <Lbl t={sec.t} mb={0} />
+              <span style={{ fontFamily: K, fontSize: 11, color: M }}>Edit</span>
+            </div>
+            <div style={{ borderRadius: 14, background: '#fff', border: `1px solid ${LG}`, overflow: 'hidden' }}>
+              {sec.fields.map((f, i) => (
+                <div key={i} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '11px 14px', borderBottom: i < sec.fields.length - 1 ? `1px solid ${LG}` : 'none'
+                }}>
+                  <span style={{ fontFamily: K, fontSize: 13, color: '#555' }}>{f}</span>
+                  <span style={{ fontFamily: K, fontSize: 12, color: GR }}>›</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </Wrap>
+    );
+
+    // ─── Notifications screen ────────────────────────────────
+    const NotificationsScreen = () => (
+      <Wrap pt={72} pb={20}>
+        <H1 t="Notifications" size={22} mb={16} />
+        {[
+          { icon: '♡', text: 'Priya Bisht liked your profile', sub: '2 minutes ago', dot: true, c: M },
+          { icon: '✓', text: "It's a match! You and Anjali matched", sub: '1 hour ago', dot: true, c: G },
+          { icon: '✉', text: 'Reena sent you a message', sub: '3 hours ago', dot: true, c: '#1565C0' },
+          { icon: '⭐', text: 'Kavita super-liked you', sub: 'Yesterday', dot: false, c: G },
+          { icon: '👁', text: '5 people viewed your profile today', sub: 'Yesterday', dot: false, c: '#555' },
+          { icon: '🔔', text: 'Complete your profile for better matches', sub: '2 days ago', dot: false, c: M },
+        ].map((n, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 0',
+            borderBottom: `1px solid ${LG}`, opacity: n.dot ? 1 : 0.65
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 20, background: n.c + '18', flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${n.c}30`
+            }}>
+              <span style={{ fontSize: 16, color: n.c }}>{n.icon}</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <span style={{
+                fontFamily: K, fontSize: 13, color: '#222', display: 'block', lineHeight: 1.4,
+                fontWeight: n.dot ? 700 : 400
+              }}>{n.text}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{n.sub}</span>
+            </div>
+            {n.dot && <div style={{ width: 8, height: 8, borderRadius: 4, background: M, flexShrink: 0, marginTop: 6 }} />}
+          </div>
+        ))}
+      </Wrap>
+    );
+
+    // ─── EDGE CASES ───────────────────────────────────────────
+
+    // Empty Discover
+    const EmptyDiscover = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F4EFE8' }}>
+        <div style={{ padding: '72px 18px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1 t="Discover" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', textAlign: 'center' }}>
+          <div style={{
+            width: 100, height: 100, borderRadius: 50, background: M + '12',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20
+          }}>
+            <span style={{ fontSize: 40 }}>🏔</span>
+          </div>
+          <H1 t="You've seen everyone!" size={20} mb={8} />
+          <P t="Come back tomorrow for fresh picks. Or expand your search filters to see more profiles." size={13} c='#666' />
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+            <Btn label="Expand filters" primary full />
+            <Btn label="Invite Pahadi friends" ghost full />
+          </div>
+          <div style={{ marginTop: 24, padding: '12px 16px', borderRadius: 14, background: '#fff', border: `1px solid ${LG}`, width: '100%' }}>
+            <span style={{ fontFamily: K, fontSize: 12, color: '#555' }}>🌟 Tip: A complete profile gets shown more. <span style={{ color: M }}>Complete yours →</span></span>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // Empty Matches
+    const EmptyMatches = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px' }}>
+          <H1 t="Matches" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', textAlign: 'center' }}>
+          <span style={{ fontSize: 56, marginBottom: 16 }}>💌</span>
+          <H1 t="No matches yet" size={20} mb={8} />
+          <P t="When someone likes you back, they'll appear here. Keep liking profiles!" size={13} c='#666' />
+          <Btn label="Discover profiles →" primary full style={{ marginTop: 24 }} />
+          <div style={{ marginTop: 16 }}>
+            <P t="Liked by 3 people" size={12} c={M} mb={0} />
+            <P t="Upgrade to see who →" size={11} c={GR} mb={0} />
+          </div>
+        </div>
+        <BottomNav active={1} />
+      </div>
+    );
+
+    // Error State
+    const ErrorState = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px' }}>
+          <H1 t="Discover" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', textAlign: 'center' }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: 40, background: '#FEE2E2',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
+          }}>
+            <span style={{ fontSize: 32 }}>⚠️</span>
+          </div>
+          <H1 t="Something went wrong" size={20} mb={8} />
+          <P t="We couldn't load profiles. Please check your connection and try again." size={13} c='#666' />
+          <Btn label="Try again" primary full style={{ marginTop: 20 }} />
+          <Btn label="Go back" ghost full style={{ marginTop: 10 }} />
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // Loading / Skeleton State
+    const LoadingSkeleton = () => {
+      const Skel = ({ h, w = '100%', r = 8, mb = 0 }) => (
+        <div style={{
+          height: h, width: w, borderRadius: r, marginBottom: mb,
+          background: 'linear-gradient(90deg, #EDE8DF 25%, #E4DDD0 50%, #EDE8DF 75%)',
+          backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite'
+        }} />
+      );
+      return (
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F4EFE8' }}>
+          <style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '72px 18px 12px' }}>
+            <Skel h={28} w={120} r={8} />
+            <Skel h={36} w={36} r={18} />
+          </div>
+          <div style={{ flex: 1, padding: '0 16px', position: 'relative' }}>
+            {/* Card skeleton */}
+            <div style={{
+              borderRadius: 24, overflow: 'hidden', height: '78%',
+              background: 'linear-gradient(90deg,#EDE8DF 25%,#E4DDD0 50%,#EDE8DF 75%)',
+              backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+            }} />
+            {/* Action buttons skeleton */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 14, paddingTop: 14 }}>
+              {[52, 42, 52].map((s, i) => (
+                <div key={i} style={{
+                  width: s, height: s, borderRadius: s / 2,
+                  background: 'linear-gradient(90deg,#EDE8DF 25%,#E4DDD0 50%,#EDE8DF 75%)',
+                  backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite',
+                  marginTop: i === 1 ? 5 : 0
+                }} />
+              ))}
+            </div>
+          </div>
+          <BottomNav active={0} />
+        </div>
+      );
+    };
+
+    // OTP verification step
+    const OTPVerify = () => (
+      <Wrap pt={80} pb={40}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 16, background: M,
+            margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{ fontFamily: K, fontSize: 22, color: '#fff' }}>📱</span>
+          </div>
+          <H1 t="Enter OTP" size={24} mb={6} />
+          <P t="Sent to +91 98765 43210" size={13} c={GR} />
+        </div>
+        <div style={{ flex: 1 }} />
+        {/* OTP boxes */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 24 }}>
+          {[6, null, null, null, null, null].map((v, i) => (
+            <div key={i} style={{
+              width: 46, height: 56, borderRadius: 12,
+              background: i === 0 ? M + '10' : '#fff',
+              border: `2px solid ${i === 0 ? M : LG}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 22, fontWeight: 700, color: i === 0 ? M : '#BBB' }}>{v || ''}</span>
+            </div>
+          ))}
+        </div>
+        <P t="Resend in 00:42" size={12} c={GR} mb={16} style={{ textAlign: 'center' }} />
+        <Btn label="Verify & continue →" primary full />
+        <div style={{ flex: 1 }} />
+        <P t="Wrong number? Go back →" size={12} c={M} mb={0} style={{ textAlign: 'center', marginTop: 20 }} />
+      </Wrap>
+    );
+
+    // ─── App ──────────────────────────────────────────────────
+    function App() {
+      const W = 390, H = 844;
+      const phone = (content) => (
+        <IOSDevice width={W} height={H}>{content}</IOSDevice>
+      );
+
+      return (
+        <DesignCanvas>
+          <DCSection id="auth" title="01 · Authentication" subtitle="OTP login, social login, OTP verify step">
+            <DCArtboard id="auth-a" label="A · OTP Login" width={W} height={H}>{phone(<AuthOTP />)}</DCArtboard>
+            <DCArtboard id="auth-b" label="B · Social / Immersive" width={W} height={H}>{phone(<AuthSocial />)}</DCArtboard>
+            <DCArtboard id="auth-c" label="C · OTP Verify step" width={W} height={H}>{phone(<OTPVerify />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="onboard" title="02 · Onboarding — All 5 Steps" subtitle="Core → Roots → Lifestyle (chips) → Preferences → Intent + Photo upload">
+            <DCArtboard id="ob-1" label="Step 1 · Basics" width={W} height={H}>{phone(<OnboardStep1 />)}</DCArtboard>
+            <DCArtboard id="ob-photos" label="Step 1b · Add Photos" width={W} height={H}>{phone(<OnboardPhotos />)}</DCArtboard>
+            <DCArtboard id="ob-2" label="Step 2 · Pahadi Roots" width={W} height={H}>{phone(<OnboardStep2 />)}</DCArtboard>
+            <DCArtboard id="ob-3" label="Step 3 · Lifestyle (chips)" width={W} height={H}>{phone(<OnboardStep3 />)}</DCArtboard>
+            <DCArtboard id="ob-4" label="Step 4 · Partner Preferences" width={W} height={H}>{phone(<OnboardStep4 />)}</DCArtboard>
+            <DCArtboard id="ob-5" label="Step 5 · Intent & Timeline" width={W} height={H}>{phone(<OnboardStep5 />)}</DCArtboard>
+            <DCArtboard id="ob-nudge" label="Completion Nudge" width={W} height={H}>{phone(<OnboardNudge />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="discover" title="03 · Discover" subtitle="3 layout directions — card stack, curated feed, browse grid">
+            <DCArtboard id="dis-a" label="A · Card Stack" width={W} height={H}>{phone(<DiscoverCard />)}</DCArtboard>
+            <DCArtboard id="dis-b" label="B · Curated Feed" width={W} height={H}>{phone(<DiscoverFeed />)}</DCArtboard>
+            <DCArtboard id="dis-c" label="C · Browse Grid" width={W} height={H}>{phone(<DiscoverGrid />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="profile" title="04 · Profile Detail" subtitle="2 directions — structured breakdown vs immersive visual">
+            <DCArtboard id="pro-a" label="A · Structured" width={W} height={H}>{phone(<ProfileDetail />)}</DCArtboard>
+            <DCArtboard id="pro-b" label="B · Immersive + Roots/Lifestyle" width={W} height={H}>{phone(<ProfileDetail2 />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="interact" title="05 · Interactions & Animations" subtitle="Like anim · Dislike anim · Icebreaker note · Match celebration">
+            <DCArtboard id="int-like" label="Like animation" width={W} height={H}>{phone(<LikeAnim />)}</DCArtboard>
+            <DCArtboard id="int-nope" label="Dislike animation" width={W} height={H}>{phone(<DislikeAnim />)}</DCArtboard>
+            <DCArtboard id="int-note" label="Like with icebreaker note" width={W} height={H}>{phone(<LikeNote />)}</DCArtboard>
+            <DCArtboard id="int-match" label="It's a Match! celebration" width={W} height={H}>{phone(<MatchCelebration />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="social" title="06 · Matches & Chat" subtitle="Matches list + Chat thread">
+            <DCArtboard id="mat" label="Matches" width={W} height={H}>{phone(<MatchesScreen />)}</DCArtboard>
+            <DCArtboard id="chat" label="Chat" width={W} height={H}>{phone(<ChatScreen />)}</DCArtboard>
+            <DCArtboard id="notifs" label="Notifications" width={W} height={H}>{phone(<NotificationsScreen />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="cultural" title="07 · Cultural Features" subtitle="Cultural identity, badges, events/festivals, village map">
+            <DCArtboard id="cult" label="Cultural connections & badges" width={W} height={H}>{phone(<CulturalScreen />)}</DCArtboard>
+            <DCArtboard id="events" label="Events & festivals" width={W} height={H}>{phone(<EventsScreen />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="trust" title="08 · Trust & Safety" subtitle="Verification flow + Report flow">
+            <DCArtboard id="ver" label="Verification" width={W} height={H}>{phone(<VerifyScreen />)}</DCArtboard>
+            <DCArtboard id="rep" label="Report & Safety" width={W} height={H}>{phone(<SafetyScreen />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="settings" title="09 · Settings & Profile Management" subtitle="Settings · Edit profile · Notifications">
+            <DCArtboard id="set" label="Settings" width={W} height={H}>{phone(<SettingsScreen />)}</DCArtboard>
+            <DCArtboard id="edit" label="Edit Profile" width={W} height={H}>{phone(<EditProfile />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="edge" title="10 · Edge Cases" subtitle="Empty discover · Empty matches · Error state · Loading skeleton">
+            <DCArtboard id="empty-dis" label="Empty discover state" width={W} height={H}>{phone(<EmptyDiscover />)}</DCArtboard>
+            <DCArtboard id="empty-mat" label="Empty matches state" width={W} height={H}>{phone(<EmptyMatches />)}</DCArtboard>
+            <DCArtboard id="err" label="Error / connection failed" width={W} height={H}>{phone(<ErrorState />)}</DCArtboard>
+            <DCArtboard id="skel" label="Loading skeleton" width={W} height={H}>{phone(<LoadingSkeleton />)}</DCArtboard>
+          </DCSection>
+
+          {/* NEW SECTIONS BELOW */}
+
+          <DCSection id="popups" title="11 · Progressive Onboarding Popups" subtitle="Bottom-sheet popups triggered on app open — optional phases 2.1–2.4">
+            <DCArtboard id="pop-know" label="2.1 Knowing (height, marital, caste)" width={W} height={H}>{phone(<PopupKnowing />)}</DCArtboard>
+            <DCArtboard id="pop-loc" label="2.2 Location popup" width={W} height={H}>{phone(<PopupLocation />)}</DCArtboard>
+            <DCArtboard id="pop-career" label="2.3 Education & Career popup" width={W} height={H}>{phone(<PopupCareer />)}</DCArtboard>
+            <DCArtboard id="pop-fam" label="2.4 Family Details popup" width={W} height={H}>{phone(<PopupFamily />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="photos" title="12 · Photo Management" subtitle="Story mode · Quality feedback · Reorder · Upload progress">
+            <DCArtboard id="ph-story" label="Photo story mode" width={W} height={H}>{phone(<PhotoStory />)}</DCArtboard>
+            <DCArtboard id="ph-quality" label="Photo quality feedback" width={W} height={H}>{phone(<PhotoQuality />)}</DCArtboard>
+            <DCArtboard id="ph-reorder" label="Reorder / manage photos" width={W} height={H}>{phone(<PhotoReorder />)}</DCArtboard>
+            <DCArtboard id="ph-upload" label="Upload progress state" width={W} height={H}>{phone(<PhotoUploading />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="discover2" title="13 · Discover Utilities" subtitle="Filters · Liked you · Expiring likes · Second chance · Undo">
+            <DCArtboard id="dis-filter" label="Filter sheet" width={W} height={H}>{phone(<DiscoverFilters />)}</DCArtboard>
+            <DCArtboard id="dis-likedyou" label="Who liked you (Gold-gated)" width={W} height={H}>{phone(<LikedYouScreen />)}</DCArtboard>
+            <DCArtboard id="dis-expiring" label="Expiring likes" width={W} height={H}>{phone(<ExpiringLikes />)}</DCArtboard>
+            <DCArtboard id="dis-2nd" label="Second chance resurfacing" width={W} height={H}>{phone(<SecondChance />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="chat2" title="14 · Chat Advanced States" subtitle="Tick lifecycle · Voice note · Ghosting nudge · First message prompt · Emoji reactions">
+            <DCArtboard id="ch-ticks" label="Message tick lifecycle" width={W} height={H}>{phone(<ChatTicks />)}</DCArtboard>
+            <DCArtboard id="ch-voice" label="Voice note (record + playback)" width={W} height={H}>{phone(<VoiceNoteUI />)}</DCArtboard>
+            <DCArtboard id="ch-ghost" label="Ghosting awareness nudge" width={W} height={H}>{phone(<GhostingNudge />)}</DCArtboard>
+            <DCArtboard id="ch-first" label="First message prompt" width={W} height={H}>{phone(<FirstMsgPrompt />)}</DCArtboard>
+            <DCArtboard id="ch-emoji" label="Emoji reactions" width={W} height={H}>{phone(<EmojiReact />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="calls" title="15 · Audio & Video Calls" subtitle="Incoming call · Audio call · Video call">
+            <DCArtboard id="call-in" label="Incoming call" width={W} height={H}>{phone(<IncomingCall />)}</DCArtboard>
+            <DCArtboard id="call-audio" label="Audio call" width={W} height={H}>{phone(<AudioCall />)}</DCArtboard>
+            <DCArtboard id="call-video" label="Video call" width={W} height={H}>{phone(<VideoCall />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="mod2" title="16 · Moderation Details" subtitle="Evidence upload · Outcome screens · Appeal · Block types">
+            <DCArtboard id="mod-ev" label="Report with evidence" width={W} height={H}>{phone(<ReportEvidence />)}</DCArtboard>
+            <DCArtboard id="mod-warn" label="Warning / ban outcome" width={W} height={H}>{phone(<SeverityOutcome />)}</DCArtboard>
+            <DCArtboard id="mod-appeal" label="Appeal screen" width={W} height={H}>{phone(<AppealScreen />)}</DCArtboard>
+            <DCArtboard id="mod-block" label="Soft vs hard block" width={W} height={H}>{phone(<BlockConfirm />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="verify2" title="17 · Verification Advanced" subtitle="LinkedIn connect · Multi-layer school/college/work badges">
+            <DCArtboard id="ver-li" label="LinkedIn integration" width={W} height={H}>{phone(<LinkedInVerify />)}</DCArtboard>
+            <DCArtboard id="ver-multi" label="Multi-layer verification list" width={W} height={H}>{phone(<MultiLayerVerify />)}</DCArtboard>
+          </DCSection>
+
+          <DCSection id="settings2" title="18 · Settings Detail Screens" subtitle="Notifications · Privacy · Account · Premium Gold">
+            <DCArtboard id="set-notif" label="Notification settings" width={W} height={H}>{phone(<SettingsNotif />)}</DCArtboard>
+            <DCArtboard id="set-priv" label="Privacy settings" width={W} height={H}>{phone(<SettingsPrivacy />)}</DCArtboard>
+            <DCArtboard id="set-acct" label="Account settings" width={W} height={H}>{phone(<SettingsAccount />)}</DCArtboard>
+            <DCArtboard id="set-gold" label="Pahadi Gold (Premium)" width={W} height={H}>{phone(<PahadiGold />)}</DCArtboard>
+          </DCSection>
+
+        </DesignCanvas>
+      );
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // ALL NEW SCREEN COMPONENTS (sections 11–18)
+    // ══════════════════════════════════════════════════════════
+
+    // ─── BottomSheet wrapper ─────────────────────────────────
+    const BottomSheet = ({ title, sub, children, pb = 30 }) => (
+      <div style={{ height: '100%', position: 'relative', background: '#F4EFE8' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'repeating-linear-gradient(45deg,#EDE8DF,#EDE8DF 4px,#E8E3DA 4px,#E8E3DA 8px)',
+          opacity: 0.5
+        }} />
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, background: BG,
+          borderRadius: '24px 24px 0 0', padding: `24px 20px ${pb}px`, overflow: 'auto',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.12)'
+        }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: LG, margin: '0 auto 20px' }} />
+          {title && <H1 t={title} size={20} mb={4} />}
+          {sub && <P t={sub} size={12} mb={16} />}
+          {children}
+        </div>
+      </div>
+    );
+
+    // ─── 11. Progressive Popups ───────────────────────────────
+
+    const PopupKnowing = () => (
+      <BottomSheet title="A bit more about you" sub="Tap to select — takes 30 seconds">
+        <Lbl t="Height" mb={8} />
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+          {["Under 5'0\"", "5'0\"–5'3\"", "5'4\"–5'7\"", "5'8\"–6'0\"", "Above 6'0\""].map((l, i) =>
+            <Tag key={l} label={l} active={i === 2} />)}
+        </div>
+        <Lbl t="Marital status" mb={8} />
+        <TileRow items={[{ icon: '🙋', label: 'Never married' }, { icon: '💔', label: 'Divorced' }, { icon: '🕊', label: 'Widowed' }]} cols={3} selected={0} />
+        <Lbl t="Community / caste" mb={8} />
+        <Inp label="e.g. Brahmin, Rajput, Negi…" sm />
+        <Nudge text="Adding caste helps surface more culturally compatible matches — you can skip" />
+        <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+          <Btn label="Skip" ghost style={{ flex: 1 }} />
+          <Btn label="Save →" primary style={{ flex: 1 }} />
+        </div>
+        <P t="2 of 4 optional sections done" size={11} c={GR} mb={0} style={{ textAlign: 'center', marginTop: 12 }} />
+      </BottomSheet>
+    );
+
+    const PopupLocation = () => (
+      <BottomSheet title="Where are you based?" sub="Helps find nearby compatible profiles">
+        <Lbl t="Current city" mb={6} />
+        <Inp label="Search city…" icon sm />
+        <Lbl t="State / country" mb={6} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          {['Uttarakhand', 'Delhi', 'Maharashtra', 'Other India', 'Abroad'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 1} sm />)}
+        </div>
+        <Lbl t="Open to relocation?" mb={8} />
+        <TileRow items={[{ icon: '✅', label: 'Yes, open' }, { icon: '🤔', label: 'Maybe' }, { icon: '🏠', label: 'Prefer same city' }]} cols={3} selected={0} />
+        <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+          <Btn label="Skip" ghost style={{ flex: 1 }} />
+          <Btn label="Save →" primary style={{ flex: 1 }} />
+        </div>
+      </BottomSheet>
+    );
+
+    const PopupCareer = () => (
+      <BottomSheet title="Education & career" sub="Helps match on lifestyle compatibility">
+        <Lbl t="Highest education" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {['High school', 'Graduate', 'Post-graduate', 'PhD', 'Professional degree'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 2} />)}
+        </div>
+        <Lbl t="Profession" mb={8} />
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {['Private sector', 'Government', 'Business', 'Self-employed', 'Student', 'Farming'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} />)}
+        </div>
+        <Lbl t="Annual income range" mb={8} />
+        <TileRow items={[
+          { icon: '💼', label: 'Under ₹5L' }, { icon: '📈', label: '₹5–15L' },
+          { icon: '🏆', label: '₹15–30L' }, { icon: '💎', label: 'Above ₹30L' },
+        ]} cols={4} selected={1} />
+        <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+          <Btn label="Skip" ghost style={{ flex: 1 }} />
+          <Btn label="Save →" primary style={{ flex: 1 }} />
+        </div>
+      </BottomSheet>
+    );
+
+    const PopupFamily = () => (
+      <BottomSheet title="Tell us about your family" sub="Family compatibility matters here">
+        <Lbl t="Family type" mb={8} />
+        <TileRow items={[{ icon: '🏘', label: 'Joint family' }, { icon: '🏠', label: 'Nuclear family' }, { icon: '🤷', label: 'Extended / flexible' }]} cols={3} selected={1} />
+        <Lbl t="Father's occupation" mb={6} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 10 }}>
+          {['Government', 'Business', 'Farmer', 'Private', 'Retired', 'Passed away'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} sm />)}
+        </div>
+        <Lbl t="Mother's occupation" mb={6} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 10 }}>
+          {['Homemaker', 'Government', 'Teacher', 'Business', 'Other'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} sm />)}
+        </div>
+        <Lbl t="Siblings" mb={8} />
+        <div style={{ display: 'flex', gap: 8 }}>
+          {['Only child', '1 sibling', '2 siblings', '3+ siblings'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 1} sm />)}
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+          <Btn label="Skip" ghost style={{ flex: 1 }} />
+          <Btn label="Save →" primary style={{ flex: 1 }} />
+        </div>
+      </BottomSheet>
+    );
+
+    // ─── 12. Photo Management ─────────────────────────────────
+
+    const PhotoStory = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#111' }}>
+        <div style={{
+          padding: '68px 16px 10px', display: 'flex', alignItems: 'center', gap: 12,
+          background: 'rgba(0,0,0,0.3)', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10
+        }}>
+          <span style={{ fontFamily: K, fontSize: 14, color: '#fff' }}>‹</span>
+          <span style={{ fontFamily: K, fontSize: 16, fontWeight: 700, color: '#fff', flex: 1 }}>Photo story</span>
+          <Btn label="Save" primary sm style={{ height: 32 }} />
+        </div>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Ph h='100%' label="your photo" r={0} style={{ height: '100%' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(0,0,0,0.8) 30%,transparent 60%)' }} />
+          {/* Story text overlay */}
+          <div style={{ position: 'absolute', bottom: 20, left: 16, right: 16 }}>
+            <div style={{
+              borderRadius: 12, background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255,255,255,0.2)', padding: '12px 14px', marginBottom: 12
+            }}>
+              <span style={{ fontFamily: K, fontSize: 14, color: '#fff', lineHeight: 1.5 }}>
+                This was taken at Nanda Devi base camp last year. Mountains are home 🏔️
+              </span>
+            </div>
+            {/* Keyboard-like input */}
+            <div style={{
+              borderRadius: 24, background: 'rgba(255,255,255,0.15)',
+              border: '1.5px solid rgba(255,255,255,0.3)',
+              height: 44, display: 'flex', alignItems: 'center', padding: '0 16px'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: 'rgba(255,255,255,0.6)', flex: 1 }}>Add your story for this photo…</span>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>✓</span>
+            </div>
+          </div>
+          {/* Photo dots */}
+          <div style={{ position: 'absolute', top: 80, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 4 }}>
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} style={{
+                flex: 1, height: 3, borderRadius: 2, margin: '0 2px',
+                background: i === 0 ? '#fff' : 'rgba(255,255,255,0.4)'
+              }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+
+    const PhotoQuality = () => (
+      <Wrap pt={72} pb={20}>
+        <H1 t="Photo tips" size={22} mb={4} />
+        <P t="Help us show your best self" size={13} />
+        <div style={{ marginBottom: 16 }}>
+          {[
+            { ph: 'Primary photo', status: 'warn', msg: 'Face slightly unclear — try better lighting', icon: '⚠️' },
+            { ph: 'Office photo', status: 'ok', msg: 'Great photo! Clear face, good lighting', icon: '✅' },
+            { ph: 'Family photo', status: 'blur', msg: 'Photo appears blurry — retake recommended', icon: '🔴' },
+            { ph: 'Holiday photo', status: 'ok', msg: 'Looks great!', icon: '✅' },
+          ].map((p, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 12, padding: '12px 14px', borderRadius: 14,
+              background: p.status === 'ok' ? '#F0FFF4' : p.status === 'blur' ? '#FFF5F5' : '#FFFBEB',
+              border: `1px solid ${p.status === 'ok' ? '#A7F3D0' : p.status === 'blur' ? '#FCA5A5' : '#FDE68A'}`,
+              marginBottom: 10
+            }}>
+              <Ph h={52} w={52} label='' r={10} style={{ flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#333', marginBottom: 2 }}>{p.ph}</div>
+                <div style={{ fontFamily: K, fontSize: 11, color: '#555', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span>{p.icon}</span><span>{p.msg}</span>
+                </div>
+              </div>
+              {p.status !== 'ok' && <Btn label="Retake" sm style={{ background: LG, height: 30, borderRadius: 15, fontSize: 11 }} />}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderRadius: 14, background: M + '10', border: `1px solid ${M}30`, padding: '12px 14px', marginBottom: 16 }}>
+          <div style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: M, marginBottom: 6 }}>📸 Your profile score: 72 / 100</div>
+          <div style={{ height: 6, borderRadius: 3, background: LG, marginBottom: 6 }}>
+            <div style={{ height: 6, borderRadius: 3, background: M, width: '72%' }} />
+          </div>
+          <div style={{ fontFamily: K, fontSize: 11, color: '#666' }}>Fix blurry family photo to reach 85+ and get 2× more matches</div>
+        </div>
+        <Btn label="Update photos" primary full />
+      </Wrap>
+    );
+
+    const PhotoReorder = () => (
+      <Wrap pt={72} pb={20}>
+        <H1 t="Manage photos" size={22} mb={4} />
+        <P t="Drag to reorder · tap ✕ to remove · first is primary" size={12} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>
+          {[{ l: 'Primary ★', active: true }, { l: 'Office' }, { l: 'Family' }, { l: 'Holiday' }, { l: 'Cultural' }, { l: '+ Add', add: true }].map((p, i) => (
+            <div key={i} style={{ position: 'relative', height: 110 }}>
+              {!p.add ? (
+                <>
+                  <div style={{
+                    height: 110, borderRadius: 12, overflow: 'hidden',
+                    border: `2px solid ${p.active ? G : LG}`
+                  }}>
+                    <Ph h={110} label={p.l} r={0} style={{ height: '100%' }} />
+                  </div>
+                  <div style={{
+                    position: 'absolute', top: 4, left: 4,
+                    background: p.active ? G : 'rgba(0,0,0,0.4)', borderRadius: 6, padding: '2px 6px'
+                  }}>
+                    <span style={{ fontFamily: K, fontSize: 9, color: '#fff' }}>{p.l}</span>
+                  </div>
+                  <div style={{
+                    position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: 10,
+                    background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <span style={{ fontSize: 10, color: '#fff' }}>✕</span>
+                  </div>
+                  {/* Drag handle */}
+                  <div style={{ position: 'absolute', bottom: 4, right: 4, opacity: 0.6 }}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="#fff">
+                      <circle cx="3" cy="3" r="1.2" /><circle cx="9" cy="3" r="1.2" />
+                      <circle cx="3" cy="9" r="1.2" /><circle cx="9" cy="9" r="1.2" />
+                    </svg>
+                  </div>
+                </>
+              ) : (
+                <div style={{
+                  height: 110, borderRadius: 12, border: `1.5px dashed ${LG}`,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  background: '#F5F0EA', gap: 6
+                }}>
+                  <span style={{ fontSize: 24, color: LG }}>+</span>
+                  <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Add photo</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <Nudge text="The app automatically picks your best photo as primary — you can override it here" />
+        <Btn label="Save order" primary full />
+      </Wrap>
+    );
+
+    const PhotoUploading = () => (
+      <Wrap pt={72} pb={20}>
+        <H1 t="Uploading photos…" size={22} mb={4} />
+        <P t="Hang tight — compressing and uploading your photos" size={13} />
+        <div style={{ marginTop: 16 }}>
+          {[
+            { name: 'Primary photo.jpg', pct: 100, done: true },
+            { name: 'Office photo.jpg', pct: 72, done: false },
+            { name: 'Family photo.jpg', pct: 0, done: false, waiting: true },
+            { name: 'Holiday photo.jpg', pct: 0, done: false, waiting: true },
+          ].map((f, i) => (
+            <div key={i} style={{
+              padding: '12px 14px', borderRadius: 14, background: '#fff',
+              border: `1px solid ${f.done ? M + '30' : LG}`, marginBottom: 10
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: f.waiting ? 0 : 6 }}>
+                <span style={{ fontFamily: K, fontSize: 13, color: '#333' }}>{f.name}</span>
+                <span style={{
+                  fontFamily: K, fontSize: 11,
+                  color: f.done ? M : f.waiting ? GR : '#555'
+                }}>
+                  {f.done ? '✓ Done' : f.waiting ? 'Waiting…' : `${f.pct}%`}
+                </span>
+              </div>
+              {!f.waiting && (
+                <div style={{ height: 4, borderRadius: 2, background: LG }}>
+                  <div style={{
+                    height: 4, borderRadius: 2, background: f.done ? M : G,
+                    width: `${f.pct}%`, transition: 'width 0.3s'
+                  }} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div style={{
+          borderRadius: 12, background: '#F5F0EA', padding: '12px 14px', marginTop: 10,
+          display: 'flex', gap: 10, alignItems: 'center'
+        }}>
+          <div style={{
+            width: 20, height: 20, borderRadius: 10, border: `2px solid ${M}`,
+            borderTopColor: 'transparent', animation: 'spin 1s linear infinite', flexShrink: 0
+          }} />
+          <span style={{ fontFamily: K, fontSize: 12, color: '#555' }}>Analysing photo quality…</span>
+        </div>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      </Wrap>
+    );
+
+    // ─── 13. Discover Utilities ───────────────────────────────
+
+    const DiscoverFilters = () => (
+      <BottomSheet title="Filter profiles" sub="Refine your discover feed" pb={40}>
+        <Lbl t="Age range" mb={6} />
+        <div style={{ padding: '0 4px', marginBottom: 14 }}>
+          <div style={{ position: 'relative', height: 32, marginBottom: 4 }}>
+            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 4, borderRadius: 2, background: LG, transform: 'translateY(-50%)' }} />
+            <div style={{ position: 'absolute', top: '50%', left: '15%', right: '20%', height: 4, borderRadius: 2, background: M, transform: 'translateY(-50%)' }} />
+            <div style={{ position: 'absolute', top: '50%', left: '15%', width: 18, height: 18, borderRadius: 9, background: '#fff', border: `2px solid ${M}`, transform: 'translate(-50%,-50%)', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+            <div style={{ position: 'absolute', top: '50%', right: '20%', width: 18, height: 18, borderRadius: 9, background: '#fff', border: `2px solid ${M}`, transform: 'translate(50%,-50%)', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontFamily: K, fontSize: 12, color: M, fontWeight: 700 }}>24 yrs</span>
+            <span style={{ fontFamily: K, fontSize: 12, color: M, fontWeight: 700 }}>35 yrs</span>
+          </div>
+        </div>
+        <Lbl t="Distance" mb={8} />
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+          {['Same district', '50 km', '100 km', '500 km', 'All India', 'NRI also'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 2} sm />)}
+        </div>
+        <Lbl t="Community / caste" mb={8} />
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+          borderRadius: 12, background: '#fff', border: `1px solid ${LG}`, marginBottom: 10
+        }}>
+          <span style={{ fontFamily: K, fontSize: 13, color: '#333', flex: 1 }}>Show only my community</span>
+          <div style={{ width: 44, height: 26, borderRadius: 13, background: LG, position: 'relative' }}>
+            <div style={{ position: 'absolute', top: 3, left: 3, width: 20, height: 20, borderRadius: 10, background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+          </div>
+        </div>
+        <Lbl t="Trust level minimum" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          {['Any', 'Basic+', 'Medium+', 'High only'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 2} sm />)}
+        </div>
+        <Lbl t="Marriage intent" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {['Any', 'Within 6 mo', '1–2 years', 'Flexible'].map((l, i) =>
+            <Tag key={l} label={l} active={i === 0} sm />)}
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Btn label="Reset" ghost style={{ flex: 1 }} />
+          <Btn label="Apply filters" primary style={{ flex: 1 }} />
+        </div>
+      </BottomSheet>
+    );
+
+    const LikedYouScreen = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', flexShrink: 0 }}>
+          <H1 t="Liked you" size={22} mb={4} />
+          <P t="These people want to connect with you" size={13} c={GR} mb={0} />
+        </div>
+        <div style={{ flex: 1, overflow: 'hidden', padding: '10px 18px', position: 'relative' }}>
+          {/* Gold gate overlay */}
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 10,
+            background: 'linear-gradient(to bottom, transparent 25%, rgba(250,247,242,0.95) 55%)',
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '0 20px 30px'
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <span style={{ fontSize: 32 }}>💎</span>
+              <H1 t="Upgrade to Pahadi Gold" size={18} mb={6} />
+              <P t="See who liked you and like them back instantly to create a match" size={13} c='#555' />
+            </div>
+            <Btn label="Unlock with Gold →" gold full style={{ background: G, marginBottom: 10 }} />
+            <Btn label="Maybe later" ghost full />
+          </div>
+          {/* Blurred grid behind */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, filter: 'blur(6px)' }}>
+            {[87, 91, 78, 83].map((s, i) => (
+              <div key={i} style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+                <Ph h={130} label="?" r={0} />
+                <div style={{ padding: '8px 10px 10px' }}>
+                  <div style={{ height: 12, borderRadius: 4, background: LG, marginBottom: 6, width: '70%' }} />
+                  <ScorePill score={s} size={24} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <BottomNav active={1} />
+      </div>
+    );
+
+    const ExpiringLikes = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        <div style={{ padding: '72px 18px 10px', flexShrink: 0 }}>
+          <H1 t="Liked you" size={22} mb={4} />
+          <P t="These matches expire — respond before time runs out" size={12} c={GR} mb={0} />
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 18px 10px' }}>
+          {[
+            { name: 'Priya Bisht', age: 29, score: 91, hrs: '4:32', urgent: true },
+            { name: 'Meena Joshi', age: 27, score: 83, hrs: '18:10', urgent: false },
+            { name: 'Kavita Negi', age: 28, score: 78, hrs: '23:45', urgent: false },
+          ].map((p, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: '14px',
+              borderRadius: 16, background: '#fff', marginBottom: 10,
+              border: `1.5px solid ${p.urgent ? '#EF4444' : LG}`,
+              boxShadow: `0 2px 8px ${p.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.05)'}`
+            }}>
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <Ph h={52} w={52} label='' r={26} />
+                <ScorePill score={p.score} size={20} style={{ position: 'absolute', bottom: -2, right: -2 }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: K, fontSize: 14, fontWeight: 700, color: '#222' }}>{p.name}, {p.age}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+                  <span style={{ fontSize: 12 }}>{p.urgent ? '🔴' : '🟡'}</span>
+                  <span style={{ fontFamily: K, fontSize: 12, color: p.urgent ? '#EF4444' : GR, fontWeight: p.urgent ? 700 : 400 }}>
+                    Expires in {p.hrs} hrs
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 19, background: '#F5F5F5',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${LG}`
+                }}>
+                  <span style={{ fontSize: 16 }}>✕</span>
+                </div>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 19, background: M,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <span style={{ fontSize: 16, color: '#fff' }}>♡</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          <Nudge text="Expiring likes create urgency — respond within 24hrs to improve your match rate" />
+        </div>
+        <BottomNav active={1} />
+      </div>
+    );
+
+    const SecondChance = () => (
+      <div style={{ height: '100%', background: '#F4EFE8', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '72px 18px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H1 t="Discover" size={22} mb={0} />
+        </div>
+        <div style={{ flex: 1, padding: '0 16px', position: 'relative' }}>
+          <div style={{
+            position: 'relative', borderRadius: 24, overflow: 'hidden',
+            height: 'calc(100% - 80px)', boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
+          }}>
+            <Ph h='100%' label="profile photo" r={0} style={{ position: 'absolute', inset: 0, height: '100%' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(10,4,2,0.9) 40%,transparent 70%)' }} />
+            {/* Second chance banner */}
+            <div style={{ position: 'absolute', top: 14, left: 14, right: 14 }}>
+              <div style={{
+                borderRadius: 12, background: G, padding: '8px 14px',
+                display: 'flex', alignItems: 'center', gap: 8
+              }}>
+                <span style={{ fontSize: 14 }}>⭐</span>
+                <div>
+                  <div style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#fff' }}>Second chance!</div>
+                  <div style={{ fontFamily: K, fontSize: 10, color: 'rgba(255,255,255,0.8)' }}>Reena improved her profile — take another look</div>
+                </div>
+              </div>
+            </div>
+            <div style={{ position: 'absolute', top: 16, right: 16 }}><TrustBadge level="Verified" /></div>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px 18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>
+                <div>
+                  <H1 t="Reena Bisht, 30" size={20} c='#fff' mb={2} />
+                  <P t="Nainital · Nurse" size={12} c='rgba(255,255,255,0.8)' mb={4} />
+                  <div><Tag label="Garhwali" sm /><Tag label="Nainital" sm /></div>
+                </div>
+                <ScorePill score={82} />
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 14, paddingTop: 14 }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${LG}`
+            }}>
+              <span style={{ fontSize: 20 }}>✕</span></div>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 2px 12px ${M}50`
+            }}>
+              <span style={{ fontSize: 20, color: '#fff' }}>♡</span></div>
+          </div>
+        </div>
+        <BottomNav active={0} />
+      </div>
+    );
+
+    // ─── 14. Chat Advanced States ─────────────────────────────
+
+    const ChatTicks = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Ph h={44} w={44} label='' r={22} />
+            <div style={{ flex: 1 }}>
+              <H1 t="Anjali Rawat" size={16} mb={2} />
+              <P t="Last seen today at 10:28 AM" size={11} c={GR} mb={0} />
+            </div>
+          </div>
+        </div>
+        <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+          <P t="Message status lifecycle:" size={11} c={GR} mb={0} style={{ textAlign: 'center', fontStyle: 'italic' }} />
+          {[
+            { msg: 'Hey, are you free this evening?', side: 'right', ticks: '1gray', label: 'Sent' },
+            { msg: 'I love Almora too! Which area are you from?', side: 'right', ticks: '2gray', label: 'Delivered' },
+            { msg: 'My family is from Kosi Katarmal near the temples', side: 'right', ticks: '2maroon', label: 'Seen at 10:28 AM' },
+            { msg: 'Oh wow! My grandparents are from near there too 🏔️', side: 'left', ticks: null, label: '' },
+          ].map((m, i) => (
+            <div key={i} style={{ alignSelf: m.side === 'right' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+              <div style={{
+                background: m.side === 'right' ? M : '#fff',
+                borderRadius: m.side === 'right' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                padding: '10px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+              }}>
+                <span style={{ fontFamily: K, fontSize: 13, color: m.side === 'right' ? '#fff' : '#222' }}>{m.msg}</span>
+              </div>
+              {m.ticks && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginTop: 3 }}>
+                  <span style={{ fontFamily: K, fontSize: 10, color: GR }}>10:26 AM</span>
+                  {m.ticks === '1gray' && <span style={{ fontSize: 12, color: GR }}>✓</span>}
+                  {m.ticks === '2gray' && <span style={{ fontSize: 12, color: GR }}>✓✓</span>}
+                  {m.ticks === '2maroon' && <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <span style={{ fontFamily: K, fontSize: 10, color: M }}>Seen 10:28</span>
+                    <span style={{ fontSize: 12, color: M }}>✓✓</span>
+                  </div>}
+                  {m.label && <div style={{ background: M + '15', borderRadius: 6, padding: '1px 6px' }}>
+                    <span style={{ fontFamily: K, fontSize: 9, color: M }}>{m.label}</span>
+                  </div>}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div style={{ padding: '8px 14px 28px', background: '#fff', borderTop: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              flex: 1, height: 42, borderRadius: 21, background: '#F4EEE6', border: `1px solid ${LG}`,
+              display: 'flex', alignItems: 'center', padding: '0 14px'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#CCC', flex: 1 }}>Message…</span>
+            </div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ color: '#fff', fontSize: 14 }}>↑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    const VoiceNoteUI = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Ph h={44} w={44} label='' r={22} />
+            <div style={{ flex: 1 }}>
+              <H1 t="Meena Joshi" size={16} mb={0} />
+              <P t="Online now" size={11} c='#22C55E' mb={0} />
+            </div>
+          </div>
+        </div>
+        <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+          {/* Received voice note bubble */}
+          <div style={{ alignSelf: 'flex-start', maxWidth: '70%' }}>
+            <div style={{
+              background: '#fff', borderRadius: '18px 18px 18px 4px', padding: '10px 14px',
+              display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.06)'
+            }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 16, background: LG,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: 14 }}>▶</span>
+              </div>
+              {/* Waveform placeholder */}
+              <div style={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1 }}>
+                {[12, 18, 10, 24, 16, 8, 20, 14, 22, 10, 18].map((h, i) => (
+                  <div key={i} style={{
+                    width: 3, height: h, borderRadius: 2,
+                    background: i < 4 ? M : LG
+                  }} />
+                ))}
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>0:12</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block', paddingLeft: 4 }}>10:30 AM</span>
+          </div>
+          {/* Sent voice note */}
+          <div style={{ alignSelf: 'flex-end', maxWidth: '70%' }}>
+            <div style={{
+              background: M, borderRadius: '18px 18px 4px 18px', padding: '10px 14px',
+              display: 'flex', alignItems: 'center', gap: 8
+            }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 16, background: 'rgba(255,255,255,0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: 14, color: '#fff' }}>▶</span>
+              </div>
+              <div style={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1 }}>
+                {[8, 16, 24, 12, 20, 14, 10, 18, 22, 8, 14].map((h, i) => (
+                  <div key={i} style={{
+                    width: 3, height: h, borderRadius: 2,
+                    background: 'rgba(255,255,255,0.6)'
+                  }} />
+                ))}
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>0:08</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block', textAlign: 'right' }}>10:31 AM ✓✓</span>
+          </div>
+        </div>
+        {/* Recording state input */}
+        <div style={{ padding: '8px 14px 28px', background: '#fff', borderTop: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              flex: 1, height: 52, borderRadius: 26, background: '#FFF0EE', border: `2px solid ${M}`,
+              display: 'flex', alignItems: 'center', padding: '0 16px', gap: 10
+            }}>
+              <div style={{
+                width: 10, height: 10, borderRadius: 5, background: '#EF4444',
+                animation: 'pulse 1s ease-in-out infinite'
+              }} />
+              {/* Live waveform */}
+              <div style={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1 }}>
+                {[10, 18, 8, 22, 14, 20, 6, 16, 24, 10, 18, 8, 20].map((h, i) => (
+                  <div key={i} style={{
+                    width: 3, height: h, borderRadius: 2, background: M,
+                    opacity: 0.7 + (i % 3) * 0.1
+                  }} />
+                ))}
+              </div>
+              <span style={{ fontFamily: K, fontSize: 13, color: M, fontWeight: 700 }}>0:04</span>
+            </div>
+            <div style={{
+              width: 52, height: 52, borderRadius: 26, background: '#EF4444',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ fontSize: 22 }}>■</span>
+            </div>
+          </div>
+          <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}`}</style>
+        </div>
+      </div>
+    );
+
+    const GhostingNudge = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Ph h={44} w={44} label='' r={22} />
+            <div style={{ flex: 1 }}>
+              <H1 t="Anjali Rawat" size={16} mb={0} />
+              <P t="Last seen 3 days ago" size={11} c={GR} mb={0} />
+            </div>
+          </div>
+        </div>
+        {/* Ghosting nudge banner */}
+        <div style={{
+          background: '#FFF8E6', padding: '10px 16px', flexShrink: 0,
+          borderBottom: `1px solid #FDE68A`, display: 'flex', gap: 8, alignItems: 'flex-start'
+        }}>
+          <span style={{ fontSize: 14 }}>⏰</span>
+          <div>
+            <span style={{ fontFamily: K, fontSize: 12, color: '#92400E', fontWeight: 700 }}>You haven't replied in 2 days</span>
+            <span style={{ fontFamily: K, fontSize: 11, color: '#A16207', display: 'block' }}>Anjali usually replies within 3 hours. Don't let this slip away!</span>
+          </div>
+        </div>
+        <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+          <div style={{ alignSelf: 'flex-start', maxWidth: '75%' }}>
+            <div style={{ background: '#fff', borderRadius: '18px 18px 18px 4px', padding: '10px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222' }}>Tell me about Almora! I visited once and loved it 🏔️</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block' }}>Mon 10:24 AM</span>
+          </div>
+          <div style={{ alignSelf: 'flex-start', maxWidth: '75%' }}>
+            <div style={{ background: '#fff', borderRadius: '18px 18px 18px 4px', padding: '10px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222' }}>Hello? 👋</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 3, display: 'block' }}>Wed 2:11 PM</span>
+          </div>
+          {/* Quick reply suggestions */}
+          <div style={{ marginTop: 8 }}>
+            <Lbl t="Quick replies" mb={8} />
+            {['Sorry for the delay! Almora is my favourite place 🏔️', 'I\'d love to chat! Are you free this weekend?'].map(s => (
+              <div key={s} style={{
+                padding: '10px 14px', borderRadius: 10, background: '#fff', marginBottom: 6,
+                border: `1px dashed ${LG}`
+              }}>
+                <span style={{ fontFamily: K, fontSize: 12, color: '#444' }}>{s}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ padding: '8px 14px 28px', background: '#fff', borderTop: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              flex: 1, height: 42, borderRadius: 21, background: '#F4EEE6', border: `1px solid ${LG}`,
+              display: 'flex', alignItems: 'center', padding: '0 14px'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#CCC', flex: 1 }}>Message…</span>
+              <span style={{ fontSize: 14 }}>🎙</span>
+            </div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ color: '#fff', fontSize: 14 }}>↑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    const FirstMsgPrompt = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Ph h={44} w={44} label='' r={22} />
+            <div style={{ flex: 1 }}>
+              <H1 t="Kavita Negi" size={16} mb={0} />
+              <P t="Sent you a message" size={11} c={GR} mb={0} />
+            </div>
+          </div>
+        </div>
+        {/* Request prompt */}
+        <div style={{ background: '#fff', padding: '16px 16px 0', flexShrink: 0 }}>
+          <div style={{ borderRadius: 16, background: BG, border: `1px solid ${LG}`, padding: '14px', marginBottom: 14 }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 12 }}>
+              <Ph h={44} w={44} label='' r={22} />
+              <div style={{ flex: 1 }}>
+                <H1 t="Kavita Negi, 28" size={14} mb={2} />
+                <TrustBadge level="Medium" />
+              </div>
+              <ScorePill score={78} size={32} />
+            </div>
+            <div style={{
+              background: '#fff', borderRadius: 12, padding: '10px 14px', marginBottom: 12,
+              border: `1px solid ${LG}`
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222' }}>Namaste! I love that you're also from Kumaon 🏔️</span>
+            </div>
+            <P t="Move to your main inbox?" size={12} c='#555' mb={10} />
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Btn label="✓ Accept" primary style={{ flex: 1 }} />
+              <Btn label="✕ Decline" ghost style={{ flex: 1 }} />
+            </div>
+          </div>
+        </div>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <P t="Accept to start chatting. Decline to move to filtered requests." size={12} c={GR} mb={0} style={{ textAlign: 'center' }} />
+        </div>
+      </div>
+    );
+
+    const EmojiReact = () => (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#F9F5EF' }}>
+        <div style={{ padding: '68px 16px 10px', background: '#fff', borderBottom: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Ph h={44} w={44} label='' r={22} />
+            <H1 t="Anjali Rawat" size={16} mb={0} />
+          </div>
+        </div>
+        <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden', position: 'relative' }}>
+          <div style={{ alignSelf: 'flex-start', maxWidth: '75%' }}>
+            <div style={{
+              background: '#fff', borderRadius: '18px 18px 18px 4px', padding: '10px 14px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)', position: 'relative'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222' }}>Mountains are home! 🏔️</span>
+              {/* Reaction bubble */}
+              <div style={{
+                position: 'absolute', bottom: -10, right: -6, background: '#fff',
+                borderRadius: 12, padding: '2px 6px', border: `1px solid ${LG}`,
+                display: 'flex', gap: 3, alignItems: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+              }}>
+                <span style={{ fontSize: 12 }}>❤️</span>
+                <span style={{ fontFamily: K, fontSize: 10, color: GR }}>2</span>
+              </div>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR, marginTop: 12, display: 'block' }}>10:24 AM</span>
+          </div>
+          {/* Emoji picker overlay — long press state */}
+          <div style={{ alignSelf: 'flex-end', maxWidth: '75%', position: 'relative' }}>
+            {/* Emoji picker */}
+            <div style={{
+              position: 'absolute', bottom: 'calc(100% + 8px)', right: 0,
+              background: '#fff', borderRadius: 28, padding: '8px 12px',
+              display: 'flex', gap: 8, boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              border: `1px solid ${LG}`, zIndex: 10
+            }}>
+              {['❤️', '😂', '😮', '😢', '🙏', '👍'].map(e => (
+                <div key={e} style={{
+                  width: 32, height: 32, borderRadius: 16,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: e === '❤️' ? M + '15' : 'transparent'
+                }}>
+                  <span style={{ fontSize: 18 }}>{e}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              background: M, borderRadius: '18px 18px 4px 18px', padding: '10px 14px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#fff' }}>Yes! Which trail did you hike last?</span>
+            </div>
+          </div>
+        </div>
+        <div style={{ padding: '8px 14px 28px', background: '#fff', borderTop: `1px solid ${LG}`, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              flex: 1, height: 42, borderRadius: 21, background: '#F4EEE6', border: `1px solid ${LG}`,
+              display: 'flex', alignItems: 'center', padding: '0 14px'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#CCC', flex: 1 }}>Message…</span>
+            </div>
+            <div style={{
+              width: 42, height: 42, borderRadius: 21, background: M,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ color: '#fff', fontSize: 14 }}>↑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ─── 15. Calls ────────────────────────────────────────────
+
+    const IncomingCall = () => (
+      <div style={{
+        height: '100%', display: 'flex', flexDirection: 'column',
+        background: `linear-gradient(160deg, ${M} 0%, #2A0A0E 100%)`,
+        alignItems: 'center', justifyContent: 'space-between', padding: '80px 30px 50px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: 100, height: 100, borderRadius: 50, overflow: 'hidden',
+            border: '3px solid rgba(255,255,255,0.3)', margin: '0 auto 16px',
+            boxShadow: '0 0 0 10px rgba(255,255,255,0.08)'
+          }}>
+            <Ph h={100} label='' r={50} style={{ height: '100%' }} />
+          </div>
+          <H1 t="Anjali Rawat" size={26} c='#fff' mb={4} />
+          <P t="Pahadi Milan Audio Call" size={14} c='rgba(255,255,255,0.6)' mb={0} />
+          <div style={{ marginTop: 10 }}>
+            <TrustBadge level="Verified" />
+          </div>
+        </div>
+        {/* Incoming indicator */}
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: 12, height: 12, borderRadius: 6, background: '#4ADE80',
+            margin: '0 auto 8px', boxShadow: '0 0 0 4px rgba(74,222,128,0.25)'
+          }} />
+          <P t="Incoming audio call…" size={14} c='rgba(255,255,255,0.7)' mb={0} />
+        </div>
+        {/* Accept / Decline */}
+        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: 280 }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              width: 68, height: 68, borderRadius: 34, background: '#EF4444',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 8px', boxShadow: '0 4px 20px rgba(239,68,68,0.5)'
+            }}>
+              <span style={{ fontSize: 26 }}>📵</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Decline</span>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              width: 68, height: 68, borderRadius: 34, background: '#22C55E',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 8px', boxShadow: '0 4px 20px rgba(34,197,94,0.5)'
+            }}>
+              <span style={{ fontSize: 26 }}>📞</span>
+            </div>
+            <span style={{ fontFamily: K, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Accept</span>
+          </div>
+        </div>
+      </div>
+    );
+
+    const AudioCall = () => (
+      <div style={{
+        height: '100%', display: 'flex', flexDirection: 'column',
+        background: `linear-gradient(160deg, #1A0608 0%, #2D1010 50%, #1A0608 100%)`,
+        alignItems: 'center', justifyContent: 'space-between', padding: '80px 30px 50px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: 110, height: 110, borderRadius: 55, overflow: 'hidden',
+            border: '3px solid rgba(255,255,255,0.2)', margin: '0 auto 16px',
+            boxShadow: '0 0 0 14px rgba(184,136,42,0.12), 0 0 0 28px rgba(184,136,42,0.06)'
+          }}>
+            <Ph h={110} label='' r={55} style={{ height: '100%' }} />
+          </div>
+          <H1 t="Anjali Rawat" size={24} c='#fff' mb={6} />
+          <P t="04:32" size={18} c='rgba(255,255,255,0.8)' mb={0} />
+          <div style={{ marginTop: 8 }}><TrustBadge level="Verified" /></div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ display: 'flex', gap: 4, justifyContent: 'center', alignItems: 'flex-end', height: 30 }}>
+            {[4, 8, 14, 10, 18, 12, 6, 16, 10, 8, 12, 16, 10, 14, 8].map((h, i) => (
+              <div key={i} style={{
+                width: 3, height: h, borderRadius: 2,
+                background: 'rgba(255,255,255,0.4)'
+              }} />
+            ))}
+          </div>
+          <P t="Anjali is speaking…" size={12} c='rgba(255,255,255,0.5)' mb={0} style={{ marginTop: 8 }} />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, width: '100%', maxWidth: 280 }}>
+          {[
+            { icon: '🔇', label: 'Mute', active: false },
+            { icon: '🔊', label: 'Speaker', active: true },
+            { icon: '📹', label: 'Switch to video', active: false },
+            { icon: '⌨️', label: 'Keypad', active: false },
+            { icon: '📵', label: 'End call', danger: true },
+            { icon: '➕', label: 'Add call', active: false },
+          ].map(btn => (
+            <div key={btn.label} style={{ textAlign: 'center' }}>
+              <div style={{
+                width: 56, height: 56, borderRadius: 28,
+                background: btn.danger ? '#EF4444' : btn.active ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px',
+                boxShadow: btn.danger ? '0 4px 20px rgba(239,68,68,0.5)' : 'none'
+              }}>
+                <span style={{ fontSize: 22 }}>{btn.icon}</span>
+              </div>
+              <span style={{ fontFamily: K, fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>{btn.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    const VideoCall = () => (
+      <div style={{ height: '100%', position: 'relative', background: '#000', overflow: 'hidden' }}>
+        {/* Remote video full-screen */}
+        <Ph h='100%' label="Anjali's video feed" r={0} style={{ height: '100%', position: 'absolute', inset: 0 }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }} />
+        {/* Self video - PiP */}
+        <div style={{
+          position: 'absolute', top: 80, right: 16, width: 80, height: 110, borderRadius: 16,
+          overflow: 'hidden', border: '2px solid rgba(255,255,255,0.4)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.4)'
+        }}>
+          <Ph h={110} label='You' r={0} style={{ height: '100%' }} />
+        </div>
+        {/* Top info */}
+        <div style={{ position: 'absolute', top: 72, left: 16 }}>
+          <H1 t="Anjali Rawat" size={16} c='#fff' mb={2} />
+          <P t="12:45" size={12} c='rgba(255,255,255,0.7)' mb={0} />
+        </div>
+        {/* Controls bottom */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '20px 30px 50px',
+          background: 'linear-gradient(to top,rgba(0,0,0,0.7) 60%,transparent)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+            {[
+              { icon: '🔇', label: 'Mute', small: true },
+              { icon: '📹', label: 'Camera', small: true, active: true },
+              { icon: '📵', label: 'End', danger: true },
+              { icon: '🔄', label: 'Flip', small: true },
+              { icon: '🔊', label: 'Speaker', small: true },
+            ].map(btn => (
+              <div key={btn.label} style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: btn.danger ? 64 : 52, height: btn.danger ? 64 : 52,
+                  borderRadius: btn.danger ? 32 : 26,
+                  background: btn.danger ? '#EF4444' : btn.active ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.4)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 4px',
+                  border: `1px solid ${btn.danger ? 'transparent' : 'rgba(255,255,255,0.2)'}`
+                }}>
+                  <span style={{ fontSize: btn.danger ? 24 : 18 }}>{btn.icon}</span>
+                </div>
+                <span style={{ fontFamily: K, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>{btn.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+
+    // ─── 16. Moderation Details ───────────────────────────────
+
+    const ReportEvidence = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Report: Harassment" size={20} mb={4} />
+        <P t="Add evidence to help our team review faster" size={13} />
+        <Lbl t="What happened?" mb={8} />
+        <div style={{
+          borderRadius: 12, background: '#fff', border: `1.5px solid ${LG}`,
+          padding: '12px 14px', minHeight: 72, marginBottom: 14
+        }}>
+          <span style={{ fontFamily: K, fontSize: 13, color: '#333' }}>They sent inappropriate messages repeatedly after I said no.</span>
+        </div>
+        <Lbl t="Attach evidence (optional but helps)" mb={8} />
+        <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+          {[{ icon: '📸', label: 'Screenshot' }, { icon: '💬', label: 'Chat snippet' }, { icon: '📁', label: 'Other file' }].map(ev => (
+            <div key={ev.label} style={{
+              flex: 1, height: 80, borderRadius: 14,
+              background: 'repeating-linear-gradient(45deg,#EDE8DF,#EDE8DF 4px,#E2DDD5 4px,#E2DDD5 8px)',
+              border: `1.5px dashed #BBB`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4
+            }}>
+              <span style={{ fontSize: 20 }}>{ev.icon}</span>
+              <span style={{ fontFamily: K, fontSize: 10, color: GR }}>{ev.label}</span>
+            </div>
+          ))}
+        </div>
+        {/* Screenshot already attached */}
+        <div style={{
+          borderRadius: 12, background: '#fff', border: `1px solid ${LG}`,
+          padding: '10px 12px', marginBottom: 14, display: 'flex', gap: 10, alignItems: 'center'
+        }}>
+          <Ph h={40} w={40} label='SS' r={8} style={{ flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <span style={{ fontFamily: K, fontSize: 12, fontWeight: 700, color: '#333', display: 'block' }}>screenshot_chat.png</span>
+            <span style={{ fontFamily: K, fontSize: 10, color: GR }}>Only messages sent via Pahadi Milan are valid evidence</span>
+          </div>
+          <span style={{ fontSize: 14, color: '#EF4444' }}>✕</span>
+        </div>
+        <Lbl t="Severity estimate" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {[{ l: 'Low', c: '#F59E0B' }, { l: 'Medium', c: '#EF4444' }, { l: 'High', c: '#DC2626' }].map(({ l, c }, i) => (
+            <div key={l} style={{
+              flex: 1, padding: '10px', borderRadius: 12, textAlign: 'center',
+              background: i === 1 ? c + '15' : '#fff', border: `1.5px solid ${i === 1 ? c : LG}`
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, fontWeight: i === 1 ? 700 : 400, color: i === 1 ? c : '#555' }}>{l}</span>
+            </div>
+          ))}
+        </div>
+        <Btn label="Submit report" primary full style={{ background: '#B71C1C' }} />
+      </Wrap>
+    );
+
+    const SeverityOutcome = () => (
+      <Wrap pt={72} pb={30}>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 36, background: '#FEF3C7',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px'
+          }}>
+            <span style={{ fontSize: 30 }}>⚠️</span>
+          </div>
+          <H1 t="Warning issued" size={22} mb={6} />
+          <P t="Your report was reviewed and we took action." size={13} c='#555' />
+        </div>
+        <div style={{ borderRadius: 16, background: '#fff', border: `1px solid ${LG}`, overflow: 'hidden', marginBottom: 16 }}>
+          {[
+            { label: 'Report ID', val: 'RPT-2024-4821' },
+            { label: 'Filed on', val: 'April 20, 2026' },
+            { label: 'Status', val: '✅ Resolved' },
+            { label: 'Action taken', val: 'Warning issued to user' },
+            { label: 'Repeat offender check', val: 'First offense' },
+          ].map((row, i) => (
+            <div key={i} style={{
+              display: 'flex', justifyContent: 'space-between', padding: '12px 16px',
+              borderBottom: i < 4 ? `1px solid ${LG}` : 'none'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 13, color: GR }}>{row.label}</span>
+              <span style={{ fontFamily: K, fontSize: 13, color: '#222', fontWeight: 700 }}>{row.val}</span>
+            </div>
+          ))}
+        </div>
+        <Nudge text="If this person contacts you again or behaviour continues, report again — repeat offenders face suspension." />
+        <Lbl t="Outcome scale" mb={8} />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {[{ l: 'Warning', c: '#F59E0B', active: true }, { l: 'Temp ban', c: '#EF4444', active: false }, { l: 'Suspended', c: '#DC2626', active: false }].map(({ l, c, active }) => (
+            <div key={l} style={{
+              flex: 1, padding: '10px', borderRadius: 12, textAlign: 'center',
+              background: active ? c + '15' : '#F5F5F5', border: `1.5px solid ${active ? c : LG}`
+            }}>
+              <span style={{ fontFamily: K, fontSize: 12, fontWeight: active ? 700 : 400, color: active ? c : '#999' }}>{l}</span>
+              {active && <div style={{ width: 6, height: 6, borderRadius: 3, background: c, margin: '4px auto 0' }} />}
+            </div>
+          ))}
+        </div>
+        <Btn label="Back to safety" primary full />
+      </Wrap>
+    );
+
+    const AppealScreen = () => (
+      <Wrap pt={72} pb={30}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16,
+          padding: '12px 16px', borderRadius: 14, background: '#FEF3C7', border: '1px solid #FDE68A'
+        }}>
+          <span style={{ fontSize: 20 }}>📢</span>
+          <div style={{ flex: 1 }}>
+            <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#92400E', display: 'block' }}>Your account was temporarily restricted</span>
+            <span style={{ fontFamily: K, fontSize: 11, color: '#A16207' }}>You can appeal this decision within 7 days</span>
+          </div>
+        </div>
+        <H1 t="Submit an appeal" size={20} mb={4} />
+        <P t="Tell us why you think this was a mistake" size={13} />
+        <Lbl t="What happened from your side?" mb={6} />
+        <div style={{
+          borderRadius: 12, background: '#fff', border: `1.5px solid ${LG}`,
+          padding: '12px 14px', minHeight: 90, marginBottom: 14
+        }}>
+          <span style={{ fontFamily: K, fontSize: 12, color: '#BBB' }}>Explain the context in your own words…</span>
+        </div>
+        <Lbl t="Any evidence to support your appeal?" mb={8} />
+        <div style={{
+          borderRadius: 12, background: '#fff', border: `1.5px dashed ${LG}`,
+          height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
+        }}>
+          <span style={{ fontFamily: K, fontSize: 13, color: GR }}>+ Attach screenshot or file</span>
+        </div>
+        <div style={{
+          borderRadius: 12, background: '#F0F9FF', border: '1px solid #BAE6FD',
+          padding: '12px 14px', marginBottom: 20
+        }}>
+          <span style={{ fontFamily: K, fontSize: 11, color: '#0369A1' }}>📋 Our team typically reviews appeals within 48 hours. You'll be notified by push and email.</span>
+        </div>
+        <Btn label="Submit appeal" primary full />
+        <Btn label="Accept restriction" ghost full style={{ marginTop: 10 }} />
+      </Wrap>
+    );
+
+    const BlockConfirm = () => (
+      <BottomSheet title="Block this person?" sub="Choose how you want to block Kavita" pb={40}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+          {[
+            { title: 'Soft block', sub: 'Hide my profile from them. They won\'t see you in discover or search.', icon: '👁', light: true },
+            { title: 'Hard block', sub: 'Completely block all contact. Remove from matches, cannot message.', icon: '🚫', light: false },
+          ].map((b, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 12, padding: '14px 16px', borderRadius: 16,
+              background: i === 0 ? '#fff' : M + '12', border: `1.5px solid ${i === 0 ? LG : M + '40'}`, cursor: 'pointer'
+            }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 20,
+                background: i === 0 ? LG : M + '20',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+              }}>
+                <span style={{ fontSize: 18 }}>{b.icon}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: K, fontSize: 14, fontWeight: 700, color: i === 0 ? '#333' : M, marginBottom: 3 }}>{b.title}</div>
+                <div style={{ fontFamily: K, fontSize: 11, color: GR, lineHeight: 1.4 }}>{b.sub}</div>
+              </div>
+              <div style={{
+                width: 20, height: 20, borderRadius: 10, flexShrink: 0, marginTop: 2,
+                border: `2px solid ${i === 0 ? LG : M}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                {i === 1 && <div style={{ width: 10, height: 10, borderRadius: 5, background: M }} />}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{
+          borderRadius: 10, background: '#FFF5F5', border: '1px solid #FCA5A5',
+          padding: '10px 14px', marginBottom: 14
+        }}>
+          <span style={{ fontFamily: K, fontSize: 11, color: '#B91C1C' }}>⚠️ Blocking does not automatically report. Use Report separately if there was harassment.</span>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Btn label="Cancel" ghost style={{ flex: 1 }} />
+          <Btn label="Block" primary style={{ flex: 1, background: '#B71C1C' }} />
+        </div>
+      </BottomSheet>
+    );
+
+    // ─── 17. Verification Advanced ────────────────────────────
+
+    const LinkedInVerify = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Verify via LinkedIn" size={22} mb={6} />
+        <P t="Link your LinkedIn to verify your education and work automatically" size={13} />
+        <div style={{
+          borderRadius: 20, background: '#0A66C2', padding: '24px 20px',
+          marginBottom: 20, textAlign: 'center'
+        }}>
+          <div style={{ fontFamily: K, fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 4 }}>in</div>
+          <div style={{ fontFamily: K, fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 8 }}>LinkedIn</div>
+          <div style={{ fontFamily: K, fontSize: 12, color: 'rgba(255,255,255,0.8)', marginBottom: 16 }}>Connect once — auto-verifies your work and education history</div>
+          <Btn label="Connect LinkedIn →" style={{ background: '#fff', width: '100%' }} />
+        </div>
+        <Lbl t="What gets verified" mb={10} />
+        {[{ icon: '🎓', l: 'Education', sub: 'Degree, institution, year' }, { icon: '💼', l: 'Current employer', sub: 'Company, role, duration' }, { icon: '⭐', l: 'Professional badges', sub: 'Shown on your profile' }].map(item => (
+          <div key={item.l} style={{
+            display: 'flex', gap: 12, padding: '12px 14px', borderRadius: 14,
+            background: '#fff', border: `1px solid ${LG}`, marginBottom: 8, alignItems: 'center'
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 20, background: G + '20',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+            }}>
+              <span style={{ fontSize: 18 }}>{item.icon}</span>
+            </div>
+            <div>
+              <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#333', display: 'block' }}>{item.l}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{item.sub}</span>
+            </div>
+          </div>
+        ))}
+        <Nudge text="Your LinkedIn data is only used for verification. We never post on your behalf." />
+        <Btn label="Skip — verify manually instead" ghost full style={{ marginTop: 8 }} />
+      </Wrap>
+    );
+
+    const MultiLayerVerify = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Your verifications" size={22} mb={4} />
+        <P t="Each badge increases trust and visibility" size={13} />
+        {/* Trust score bar */}
+        <div style={{ borderRadius: 16, background: '#fff', padding: '16px', marginBottom: 20, border: `1px solid ${LG}` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#333' }}>Trust Score</span>
+            <span style={{ fontFamily: K, fontSize: 16, fontWeight: 700, color: G }}>68 / 100</span>
+          </div>
+          <div style={{ height: 8, borderRadius: 4, background: LG, marginBottom: 6 }}>
+            <div style={{
+              height: 8, borderRadius: 4, width: '68%',
+              background: `linear-gradient(to right, ${M}, ${G})`
+            }} />
+          </div>
+          <span style={{ fontFamily: K, fontSize: 11, color: GR }}>Verify education to reach High Trust (80+)</span>
+        </div>
+        <Lbl t="Verification layers" mb={10} />
+        {[
+          { l: 'Phone number', sub: 'OTP verified', done: true, icon: '📱' },
+          { l: 'Profile photo', sub: 'Face matched', done: true, icon: '🤳' },
+          { l: 'Government ID', sub: 'Aadhaar verified', done: true, icon: '🪪' },
+          { l: 'School / 10th', sub: 'Upload marksheet', done: false, icon: '📖' },
+          { l: 'College degree', sub: 'Upload certificate', done: false, icon: '🎓' },
+          { l: 'Current employer', sub: 'LinkedIn or offer letter', done: false, icon: '💼' },
+          { l: 'Family verification', sub: 'Parent / guardian confirms', done: false, icon: '👨‍👩‍👧' },
+        ].map((item, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+            borderRadius: 14, background: item.done ? M + '06' : '#fff', marginBottom: 8,
+            border: `1px solid ${item.done ? M + '20' : LG}`
+          }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 18, flexShrink: 0,
+              background: item.done ? M : LG, display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ fontSize: 16 }}>{item.done ? '✓' : item.icon}</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: item.done ? M : '#333', display: 'block' }}>{item.l}</span>
+              <span style={{ fontFamily: K, fontSize: 11, color: GR }}>{item.sub}</span>
+            </div>
+            {!item.done && <Btn label="Verify" sm style={{ background: LG }} />}
+            {item.done && <span style={{ fontFamily: K, fontSize: 11, color: M, fontWeight: 700 }}>✓</span>}
+          </div>
+        ))}
+      </Wrap>
+    );
+
+    // ─── 18. Settings Detail Screens ─────────────────────────
+
+    const SettingsNotif = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Notifications" size={22} mb={16} />
+        {[
+          {
+            group: 'Matches & Likes', items: [
+              { l: 'New match', on: true }, { l: 'Someone liked you', on: true }, { l: 'Super like received', on: true }, { l: 'Expiring likes', on: true },
+            ]
+          },
+          {
+            group: 'Messages', items: [
+              { l: 'New message', on: true }, { l: 'Message from high-match', on: true }, { l: 'Unread reminder', on: false }, { l: 'Voice note received', on: true },
+            ]
+          },
+          {
+            group: 'Profile & Discovery', items: [
+              { l: 'Profile viewed', on: false }, { l: 'Profile score tips', on: true }, { l: 'New profiles nearby', on: false },
+            ]
+          },
+          {
+            group: 'App & Events', items: [
+              { l: 'Events near you', on: true }, { l: 'Cultural festivals', on: true }, { l: 'Promotions & offers', on: false },
+            ]
+          },
+        ].map(g => (
+          <div key={g.group} style={{ marginBottom: 20 }}>
+            <Lbl t={g.group} mb={8} />
+            <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}` }}>
+              {g.items.map((item, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', padding: '13px 16px',
+                  borderBottom: i < g.items.length - 1 ? `1px solid ${LG}` : 'none'
+                }}>
+                  <span style={{ fontFamily: K, fontSize: 14, color: '#333', flex: 1 }}>{item.l}</span>
+                  <div style={{ width: 44, height: 26, borderRadius: 13, background: item.on ? M : LG, position: 'relative', cursor: 'pointer' }}>
+                    <div style={{
+                      position: 'absolute', top: 3, width: 20, height: 20, borderRadius: 10,
+                      background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                      [item.on ? 'right' : 'left']: 3
+                    }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </Wrap>
+    );
+
+    const SettingsPrivacy = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Privacy" size={22} mb={16} />
+        <Lbl t="Who can see you" mb={8} />
+        <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}`, marginBottom: 20 }}>
+          {[{ l: 'Show me in discover', on: true }, { l: 'Show distance', on: false }, { l: 'Show last active time', on: true }, { l: 'Show profile to verified only', on: false }].map((item, i, arr) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', padding: '13px 16px',
+              borderBottom: i < arr.length - 1 ? `1px solid ${LG}` : 'none'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 14, color: '#333', flex: 1 }}>{item.l}</span>
+              <div style={{ width: 44, height: 26, borderRadius: 13, background: item.on ? M : LG, position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', top: 3, width: 20, height: 20, borderRadius: 10,
+                  background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', [item.on ? 'right' : 'left']: 3
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Lbl t="Messaging" mb={8} />
+        <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}`, marginBottom: 20 }}>
+          {[{ l: 'Read receipts', on: true }, { l: 'Typing indicator', on: true }, { l: 'Online status', on: false }].map((item, i, arr) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', padding: '13px 16px',
+              borderBottom: i < arr.length - 1 ? `1px solid ${LG}` : 'none'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 14, color: '#333', flex: 1 }}>{item.l}</span>
+              <div style={{ width: 44, height: 26, borderRadius: 13, background: item.on ? M : LG, position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', top: 3, width: 20, height: 20, borderRadius: 10,
+                  background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', [item.on ? 'right' : 'left']: 3
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Lbl t="Data & account" mb={8} />
+        <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}` }}>
+          {[{ l: 'Download my data', val: 'Request →' }, { l: 'Delete account', val: 'Danger →', danger: true }].map((item, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', padding: '13px 16px',
+              borderBottom: i === 0 ? `1px solid ${LG}` : 'none', background: item.danger ? '#FFF5F5' : 'transparent'
+            }}>
+              <span style={{ fontFamily: K, fontSize: 14, color: item.danger ? '#B71C1C' : '#333', flex: 1 }}>{item.l}</span>
+              <span style={{ fontFamily: K, fontSize: 12, color: item.danger ? '#EF4444' : GR }}>{item.val}</span>
+            </div>
+          ))}
+        </div>
+      </Wrap>
+    );
+
+    const SettingsAccount = () => (
+      <Wrap pt={72} pb={30}>
+        <H1 t="Account" size={22} mb={16} />
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <div style={{ position: 'relative', width: 80, height: 80, margin: '0 auto 12px' }}>
+            <Ph h={80} w={80} label='' r={40} />
+            <div style={{
+              position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: 13,
+              background: G, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2px solid #fff'
+            }}>
+              <span style={{ fontSize: 12 }}>✎</span>
+            </div>
+          </div>
+          <H1 t="Priya Rawat" size={18} mb={2} />
+          <TrustBadge level="Medium" />
+        </div>
+        <Lbl t="Contact details" mb={8} />
+        <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}`, marginBottom: 20 }}>
+          {[{ l: 'Phone', val: '+91 98765 43210', editable: false }, { l: 'Email', val: 'priya@gmail.com', editable: true }, { l: 'Emergency contact', val: 'Add family member', editable: true }].map((item, i, arr) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', padding: '13px 16px',
+              borderBottom: i < arr.length - 1 ? `1px solid ${LG}` : 'none'
+            }}>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontFamily: K, fontSize: 11, color: GR, display: 'block' }}>{item.l}</span>
+                <span style={{ fontFamily: K, fontSize: 14, color: '#333' }}>{item.val}</span>
+              </div>
+              {item.editable && <span style={{ fontFamily: K, fontSize: 12, color: M }}>Edit</span>}
+            </div>
+          ))}
+        </div>
+        <Lbl t="Linked accounts" mb={8} />
+        <div style={{ borderRadius: 16, background: '#fff', overflow: 'hidden', border: `1px solid ${LG}`, marginBottom: 20 }}>
+          {[{ l: 'Google', connected: true, icon: '🅶' }, { l: 'Apple', connected: false, icon: '🍏' }, { l: 'LinkedIn', connected: false, icon: '💼' }].map((item, i, arr) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: '13px 16px',
+              borderBottom: i < arr.length - 1 ? `1px solid ${LG}` : 'none'
+            }}>
+              <span style={{ fontSize: 18 }}>{item.icon}</span>
+              <span style={{ fontFamily: K, fontSize: 14, color: '#333', flex: 1 }}>{item.l}</span>
+              <span style={{ fontFamily: K, fontSize: 12, color: item.connected ? M : GR, fontWeight: item.connected ? 700 : 400 }}>
+                {item.connected ? 'Connected' : 'Connect'}
+              </span>
+            </div>
+          ))}
+        </div>
+        <Btn label="Log out" ghost full style={{ borderColor: '#EF4444', color: '#EF4444' }} />
+      </Wrap>
+    );
+
+    const PahadiGold = () => (
+      <div style={{
+        height: '100%', display: 'flex', flexDirection: 'column',
+        background: `linear-gradient(160deg, #1A0E02 0%, #3D2408 50%, #1A0E02 100%)`, overflow: 'hidden'
+      }}>
+        <div style={{ padding: '72px 18px 0', flexShrink: 0 }}>
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div style={{ fontFamily: K, fontSize: 12, color: G, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>✦ Unlock the best of Pahadi Milan</div>
+            <H1 t="Pahadi Gold" size={30} c={G} mb={4} />
+            <P t="Find your person faster, with more visibility and powerful tools" size={13} c='rgba(255,255,255,0.7)' mb={0} />
+          </div>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 20px 20px' }}>
+          {[
+            { icon: '👁', l: 'See who liked you', sub: 'Respond and match instantly' },
+            { icon: '♻️', l: 'Unlimited undo', sub: 'Go back to skipped profiles' },
+            { icon: '⭐', l: '5 super likes / day', sub: 'Stand out from the crowd' },
+            { icon: '💎', l: 'Gold badge on profile', sub: 'Shown to more people' },
+            { icon: '📊', l: 'Profile analytics', sub: 'See views, likes, response rate' },
+            { icon: '🎯', l: 'Priority in discover', sub: 'Shown at top of feed' },
+            { icon: '🔍', l: 'Advanced filters', sub: 'Income, education, intent' },
+            { icon: '📞', l: 'Unlimited audio/video calls', sub: 'No restrictions' },
+          ].map((f, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 12, padding: '10px 0',
+              borderBottom: `1px solid rgba(255,255,255,0.06)`
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 18, background: G + '25', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: 16 }}>{f.icon}</span>
+              </div>
+              <div>
+                <span style={{ fontFamily: K, fontSize: 13, fontWeight: 700, color: '#fff', display: 'block' }}>{f.l}</span>
+                <span style={{ fontFamily: K, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{f.sub}</span>
+              </div>
+            </div>
+          ))}
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[{ period: '1 month', price: '₹499', badge: '' }, { period: '3 months', price: '₹1,199', badge: 'Save 20%', popular: true }, { period: '12 months', price: '₹3,499', badge: 'Best value' }].map(plan => (
+              <div key={plan.period} style={{
+                padding: '14px 16px', borderRadius: 16,
+                background: plan.popular ? G + '25' : 'rgba(255,255,255,0.06)',
+                border: `1.5px solid ${plan.popular ? G : 'rgba(255,255,255,0.12)'}`,
+                display: 'flex', alignItems: 'center', gap: 12
+              }}>
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontFamily: K, fontSize: 14, fontWeight: 700, color: '#fff' }}>{plan.period}</span>
+                  {plan.badge && <span style={{ fontFamily: K, fontSize: 10, color: G, marginLeft: 8, fontWeight: 700 }}>{plan.badge}</span>}
+                </div>
+                <span style={{ fontFamily: K, fontSize: 16, fontWeight: 700, color: G }}>{plan.price}</span>
+              </div>
+            ))}
+            <Btn label="Start Gold →" style={{ background: G, width: '100%', marginTop: 4 }} />
+            <P t="Cancel anytime · 7-day refund guarantee" size={11} c='rgba(255,255,255,0.4)' mb={0} style={{ textAlign: 'center' }} />
+          </div>
+        </div>
+      </div>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
